@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using NexusForever.Game.Abstract.Entity;
+﻿using NexusForever.Game.Abstract.Entity;
 using NexusForever.Game.Abstract.Prerequisite;
 using NexusForever.Game.Static.Prerequisite;
 
@@ -10,14 +9,11 @@ namespace NexusForever.Game.Prerequisite.Check
     {
         #region Dependency Injection
 
-        private readonly ILogger<PrerequisiteCheckOtherPrerequisite> log;
         private readonly IPrerequisiteManager prerequisiteManager;
 
         public PrerequisiteCheckOtherPrerequisite(
-            ILogger<PrerequisiteCheckOtherPrerequisite> log,
             IPrerequisiteManager prerequisiteManager)
         {
-            this.log                 = log;
             this.prerequisiteManager = prerequisiteManager;
         }
 
@@ -25,16 +21,12 @@ namespace NexusForever.Game.Prerequisite.Check
 
         public bool Meets(IUnitEntity subject, PrerequisiteComparison comparison, uint value, uint objectId, IPrerequisiteParameters parameters)
         {
-            switch (comparison)
-            {
-                case PrerequisiteComparison.NotEqual:
-                    return !prerequisiteManager.Meets(subject, objectId, parameters);
-                case PrerequisiteComparison.Equal:
-                    return prerequisiteManager.Meets(subject, objectId, parameters);
-                default:
-                    log.LogWarning($"Unhandled {comparison} for {PrerequisiteType.OtherPrerequisite}!");
-                    return false;
-            }
+            // the client only negates for NotEqual, any other comparison (including 0, which is used by the game tables) checks the prerequisite as is
+            // see 0x1404A45DF in the client
+            if (comparison == PrerequisiteComparison.NotEqual)
+                return !prerequisiteManager.Meets(subject, objectId, parameters);
+
+            return prerequisiteManager.Meets(subject, objectId, parameters);
         }
     }
 }

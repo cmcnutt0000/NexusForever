@@ -32,11 +32,17 @@ namespace NexusForever.Game.Prerequisite.Check
             if (entry == null)
                 return false;
 
-            float x = MathF.Cos(-parameters.Target.Rotation.X);
-            float z = MathF.Sin(-parameters.Target.Rotation.X);
+            // without flag 1 the target has to be inside the arc around the subject's facing, with it the subject has to be inside the arc around the target's facing
+            // see 0x14049D940 in the client
+            bool targetFacing = (entry.Flags & 1) != 0;
+            IUnitEntity source = targetFacing ? parameters.Target : subject;
+            IUnitEntity other  = targetFacing ? subject : parameters.Target;
+
+            float x = MathF.Cos(-source.Rotation.X);
+            float z = MathF.Sin(-source.Rotation.X);
             Vector3 forward = new Vector3(x, 0, z);
 
-            Vector3 direction = Vector3.Normalize(subject.Position - parameters.Target.Position);
+            Vector3 direction = Vector3.Normalize(other.Position - source.Position);
             float dot = Vector3.Dot(direction, forward);
             float cross = Vector3.Cross(direction, forward).Y;
 

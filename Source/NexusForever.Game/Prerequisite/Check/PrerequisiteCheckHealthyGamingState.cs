@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Microsoft.Extensions.Logging;
 using NexusForever.Game.Abstract;
 using NexusForever.Game.Abstract.Entity;
 using NexusForever.Game.Abstract.Prerequisite;
@@ -11,18 +12,33 @@ using NexusForever.Network.World.Message.Static;
 
 namespace NexusForever.Game.Prerequisite.Check
 {
-    [PrerequisiteCheck(PrerequisiteType.RapidTransport)]
-    public class PrerequisiteCheckRapidTransport : IPrerequisiteCheck
+    /// <summary>
+    /// The client compares the player's Healthy Gaming state (the play time limiter state sent to the UI with HealthyGamingUpdate) with objectId, see 0x14049CB30 in the client.
+    /// </summary>
+    /// <remarks>
+    /// The only prerequisite using this type is 37806 (state not equal to 2), the cast and persistence prerequisite of Recall, Teleport to House, the capital teleports and Rapid Transport.
+    /// Rapid Transport casts carry a taxi node, so the cost check for Rapid Transport also happens here.
+    /// </remarks>
+    [PrerequisiteCheck(PrerequisiteType.HealthyGamingState)]
+    public class PrerequisiteCheckHealthyGamingState : IPrerequisiteCheck
     {
+        /// <summary>
+        /// Healthy Gaming isn't implemented, players are always in the unrestricted state.
+        /// </summary>
+        private const uint HealthyGamingState = 0u;
+
         #region Dependency Injection
 
+        private readonly ILogger<PrerequisiteCheckHealthyGamingState> log;
         private readonly IGameTableManager gameTableManager;
         private readonly IRapidTransportCostCalculator rapidTransportCostCalculator;
 
-        public PrerequisiteCheckRapidTransport(
+        public PrerequisiteCheckHealthyGamingState(
+            ILogger<PrerequisiteCheckHealthyGamingState> log,
             IGameTableManager gameTableManager,
             IRapidTransportCostCalculator rapidTransportCostCalculator)
         {
+            this.log                          = log;
             this.gameTableManager             = gameTableManager;
             this.rapidTransportCostCalculator = rapidTransportCostCalculator;
         }
@@ -34,13 +50,30 @@ namespace NexusForever.Game.Prerequisite.Check
             if (subject is not IPlayer player)
                 return false;
 
-            if (!CanAffordRapidTransport(player, parameters))
+            if (parameters.TaxiNode != null && !CanAffordRapidTransport(player, parameters))
             {
                 parameters.CastResult ??= CastResult.RapidTransportInvalid;
                 return false;
             }
 
-            return true;
+            switch (comparison)
+            {
+                case PrerequisiteComparison.Equal:
+                    return HealthyGamingState == objectId;
+                case PrerequisiteComparison.NotEqual:
+                    return HealthyGamingState != objectId;
+                case PrerequisiteComparison.GreaterThan:
+                    return HealthyGamingState > objectId;
+                case PrerequisiteComparison.GreaterThanOrEqual:
+                    return HealthyGamingState >= objectId;
+                case PrerequisiteComparison.LessThan:
+                    return HealthyGamingState < objectId;
+                case PrerequisiteComparison.LessThanOrEqual:
+                    return HealthyGamingState <= objectId;
+                default:
+                    log.LogWarning($"Unhandled PrerequisiteComparison {comparison} for {PrerequisiteType.HealthyGamingState}!");
+                    return false;
+            }
         }
 
         private bool CanAffordRapidTransport(IPlayer player, IPrerequisiteParameters parameters)

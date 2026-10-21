@@ -25,12 +25,16 @@ namespace NexusForever.Game.Prerequisite.Check
             if (subject is not IPlayer player)
                 return false;
 
+            // the client compares the completion state (1 completed, 0 not completed) with value, see 0x14049F770 in the client
+            // value 0 is used to require that an achievement is not completed yet
+            uint state = player.AchievementManager.HasCompletedAchievement((ushort)objectId) ? 1u : 0u;
+
             switch (comparison)
             {
                 case PrerequisiteComparison.NotEqual:
-                    return !player.AchievementManager.HasCompletedAchievement((ushort)objectId);
+                    return state != value;
                 case PrerequisiteComparison.Equal:
-                    return player.AchievementManager.HasCompletedAchievement((ushort)objectId);
+                    return state == value;
                 default:
                     log.LogWarning($"Unhandled PrerequisiteComparison {comparison} for {PrerequisiteType.AchievementState}!");
                     return false;

@@ -22,19 +22,16 @@ namespace NexusForever.Game.Prerequisite.Check
 
         public bool Meets(IUnitEntity subject, PrerequisiteComparison comparison, uint value, uint objectId, IPrerequisiteParameters parameters)
         {
-            if (subject is not IPlayer player)
-                return false;
-
-            // TODO: Confirm how the objectId is calculated. It seems like this check always checks for a Spell that is determined by an objectId.
-
-            // Error message is "Spell requirement not met"
+            // objectId is a spell group id (Spell4GroupList), the client checks for an aura on the unit from a spell in that group, see 0x1404A2B5A in the client
+            // TODO: the client also counts auras applied by other units, spells are currently only tracked on the caster
+            bool hasSpell = subject.GetSpellsByGroupId(objectId).Any(s => !s.IsCasting && !s.IsFinished);
 
             switch (comparison)
             {
                 case PrerequisiteComparison.Equal:
-                    return player.SpellManager.GetSpell(value) != null;
+                    return hasSpell;
                 case PrerequisiteComparison.NotEqual:
-                    return player.SpellManager.GetSpell(value) == null;
+                    return !hasSpell;
                 default:
                     log.LogWarning($"Unhandled {comparison} for {PrerequisiteType.SpellObj}!");
                     return false;
