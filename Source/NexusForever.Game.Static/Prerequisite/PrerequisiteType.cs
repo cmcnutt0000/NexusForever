@@ -61,7 +61,7 @@
         PathEpisode                 = 53, // You do not meet the player path episode requirement
         PlayerPathMission           = 54, // You do not meet the player path mission requirement
         Unknown55                   = 55, // Requirements not met
-        Unknown56                   = 56, // Requirements not met
+        CCState                     = 56, // Requirements not met - unit has the CCState in value
         // 57 is unused in PrerequisiteType.tbl
         // 58 is unused in PrerequisiteType.tbl
         Spell59                     = 59, // Spell requirements not met
@@ -82,7 +82,7 @@
         ChallengeLocked             = 74, // The specified challenge is locked
         // 75 is unused in PrerequisiteType.tbl
         Unknown76                   = 76, // Requirements not met
-        Unknown77                   = 77, // Requirements not met
+        AnyCCState                  = 77, // Requirements not met - unit has any CCState
         MovementMode                = 78, // Invalid movement mode
         UnderForcedMovement         = 79, // Not under forced movement
         HealthRequirement           = 80, // You do not meet the health requirements
