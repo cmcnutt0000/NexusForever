@@ -11,12 +11,17 @@ namespace NexusForever.Game.Abstract.Quest
         QuestObjectiveEntry Entry { get; }
 
         /// <summary>
-        /// Quest objective is sequential, previous quest objective must be complete.
+        /// Quest objective is sequential, previous required quest objectives must be complete.
         /// </summary>
         bool IsSequential();
 
         /// <summary>
-        /// Quest objective is hidden until previous objective is complete.
+        /// Quest objective follows previous objectives, it is only active while the previous quest objectives are complete or active.
+        /// </summary>
+        bool FollowsPrevious();
+
+        /// <summary>
+        /// Quest objective is never shown in the objective list.
         /// </summary>
         bool IsHidden();
 
@@ -25,6 +30,14 @@ namespace NexusForever.Game.Abstract.Quest
         /// </summary>
         bool IsOptional();
 
-        bool HasUnknown0200();
+        /// <summary>
+        /// Quest objective progress is a count rather than a percentage.
+        /// </summary>
+        bool IsProgressCounted();
+
+        /// <summary>
+        /// Quest objective progress is a percentage in tenths (0-1000) rather than a count.
+        /// </summary>
+        bool IsDynamic();
     }
 }

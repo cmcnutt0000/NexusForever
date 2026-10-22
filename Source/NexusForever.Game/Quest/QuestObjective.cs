@@ -130,18 +130,6 @@ namespace NexusForever.Game.Quest
             // TODO: update timer
         }
 
-        private bool IsDynamic()
-        {
-            // dynamic objectives have their progress based on percentage rather than count
-            return ObjectiveInfo.Type is QuestObjectiveType.KillCreature
-                    or QuestObjectiveType.KillTargetGroups
-                    or QuestObjectiveType.Unknown15
-                    or QuestObjectiveType.KillTargetGroup
-                    or QuestObjectiveType.KillCreature2
-                && ObjectiveInfo.Entry.Count > 1u
-                && !ObjectiveInfo.HasUnknown0200();
-        }
-
         /// <summary>
         /// Return if the objective has been completed.
         /// </summary>
@@ -152,7 +140,7 @@ namespace NexusForever.Game.Quest
 
         private uint GetMaxValue()
         {
-            return IsDynamic() ? 1000u : ObjectiveInfo.Entry.Count;
+            return ObjectiveInfo.IsDynamic() ? 1000u : ObjectiveInfo.Entry.Count;
         }
 
         /// <summary>
@@ -160,7 +148,7 @@ namespace NexusForever.Game.Quest
         /// </summary>
         public void ObjectiveUpdate(uint update)
         {
-            if (IsDynamic())
+            if (ObjectiveInfo.IsDynamic())
                 update = (uint)(((float)update / ObjectiveInfo.Entry.Count) * 1000f);
 
             Progress = Math.Min(progress + update, GetMaxValue());

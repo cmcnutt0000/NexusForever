@@ -525,17 +525,44 @@ namespace NexusForever.Game.Quest
                 State = QuestState.Achieved;
         }
 
-        private bool CanUpdateObjective(IQuestObjective objective)
+        /// <summary>
+        /// Returns if the <see cref="IQuestObjective"/> with the supplied index is active and can be progressed.
+        /// </summary>
+        /// <remarks>
+        /// See 0x140553790 in the client, flag 8 (hidden) is only used for the objective list, see 0x140550F70 in the client.
+        /// </remarks>
+        public bool IsObjectiveActive(byte index)
         {
+            IQuestObjective objective = GetQuestObjectiveByIndex(index);
+            if (objective == null)
+                return false;
+
             if (objective.ObjectiveInfo.IsSequential())
             {
-                for (int i = 0; i < objective.Index; i++)
-                    if (!objectives[i].IsComplete())
+                // optional objectives before a sequential objective don't need to be complete
+                for (byte i = 0; i < index; i++)
+                {
+                    IQuestObjective previous = GetQuestObjectiveByIndex(i);
+                    if (previous != null && !previous.ObjectiveInfo.IsOptional() && !previous.IsComplete())
                         return false;
+                }
+            }
+            else if (objective.ObjectiveInfo.FollowsPrevious())
+            {
+                for (int i = index - 1; i >= 0; i--)
+                {
+                    IQuestObjective previous = GetQuestObjectiveByIndex((byte)i);
+                    if (previous != null && !previous.IsComplete() && !IsObjectiveActive((byte)i))
+                        return false;
+                }
             }
 
-            // TODO: client also checks objective flags 1 and 8 in the same function
             return true;
+        }
+
+        private bool CanUpdateObjective(IQuestObjective objective)
+        {
+            return IsObjectiveActive(objective.Index);
         }
 
         private bool RequiredObjectivesComplete()

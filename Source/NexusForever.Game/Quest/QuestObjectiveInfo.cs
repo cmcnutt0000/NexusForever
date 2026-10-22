@@ -20,7 +20,7 @@ namespace NexusForever.Game.Quest
         }
 
         /// <summary>
-        /// Quest objective is sequential, previous quest objective must be complete.
+        /// Quest objective is sequential, previous required quest objectives must be complete.
         /// </summary>
         public bool IsSequential()
         {
@@ -28,7 +28,15 @@ namespace NexusForever.Game.Quest
         }
 
         /// <summary>
-        /// Quest objective is hidden until previous objective is complete.
+        /// Quest objective follows previous objectives, it is only active while the previous quest objectives are complete or active.
+        /// </summary>
+        public bool FollowsPrevious()
+        {
+            return ((QuestObjectiveFlags)Entry.Flags & QuestObjectiveFlags.FollowsPrevious) != 0;
+        }
+
+        /// <summary>
+        /// Quest objective is never shown in the objective list.
         /// </summary>
         public bool IsHidden()
         {
@@ -43,9 +51,29 @@ namespace NexusForever.Game.Quest
             return ((QuestObjectiveFlags)Entry.Flags & QuestObjectiveFlags.Optional) != 0;
         }
 
-        public bool HasUnknown0200()
+        /// <summary>
+        /// Quest objective progress is a count rather than a percentage.
+        /// </summary>
+        public bool IsProgressCounted()
         {
-            return ((QuestObjectiveFlags)Entry.Flags & QuestObjectiveFlags.Unknown0200) != 0;
+            return ((QuestObjectiveFlags)Entry.Flags & QuestObjectiveFlags.CountedProgress) != 0;
+        }
+
+        /// <summary>
+        /// Quest objective progress is a percentage in tenths (0-1000) rather than a count.
+        /// </summary>
+        /// <remarks>
+        /// Kill objectives with a count above 1 are dynamic unless <see cref="QuestObjectiveFlags.CountedProgress"/> is set, see 0x140551840 in the client.
+        /// </remarks>
+        public bool IsDynamic()
+        {
+            return Type is QuestObjectiveType.KillCreature
+                    or QuestObjectiveType.KillTargetGroups
+                    or QuestObjectiveType.KillCluster
+                    or QuestObjectiveType.KillTargetGroup
+                    or QuestObjectiveType.KillCreature2
+                && Entry.Count > 1u
+                && !IsProgressCounted();
         }
     }
 }
