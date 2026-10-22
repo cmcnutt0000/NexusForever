@@ -126,12 +126,12 @@
         Unit                        = 115, // Unit requirement not met
         Stealth                     = 116, // Stealth property requirement not met
         PublicEvent117              = 117, // Public event requirement not met
-        PublicEventObjective188     = 118, // Public event objective requirement not met 
+        PublicEventObjectiveStatus  = 118, // Public event objective requirement not met
         PublicEventObjectiveObject  = 119, // Public event objective object requirement not met
         PublicEvent120              = 120, // Public event requirement not met
         PublicEvent121              = 121, // Public event requirement not met.
         PublicEventObjective122     = 122, // Public event objective not objective spawn
-        Unknown123                  = 123, // Public event objective not objective spawn
+        PublicEventObjectiveCount   = 123, // Public event objective not objective spawn
         ChallengeCompletionCount    = 124, // Invalid challenge completion count
         Challenge125                = 125, // Challenge requirement not met
         PathHoldout                 = 126, // Path holdout requirement not met
