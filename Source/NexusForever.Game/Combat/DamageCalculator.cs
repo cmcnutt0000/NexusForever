@@ -133,16 +133,55 @@ namespace NexusForever.Game.Combat
                 }
             }
 
+            float typeDamage = (typeBaseDamage + baseEntityDamage) * typeMultiplier;
             if (caster.Type is not EntityType.Player and not EntityType.Ghost)
-            {
-                // TODO: some client code specific to non player entities
-            }
+                ApplyNonPlayerScaling(caster, entry, ref basePropertyDamage, ref typeDamage);
 
-            float baseDamage = basePropertyDamage + ((typeBaseDamage + baseEntityDamage) * typeMultiplier);
+            float baseDamage = basePropertyDamage + typeDamage;
 
-            float propertyMultiplier = caster.GetProperty((Property)(entry.DamageType + 140)).Value;
+            // damage effects can be reduced to nothing by the multiplier, other effects are never reduced below their base value
+            float minimumMultiplier = entry.EffectType is SpellEffectType.Damage or SpellEffectType.Transference or SpellEffectType.DamageShields ? 0f : 1f;
+            float propertyMultiplier = MathF.Max(minimumMultiplier, caster.GetProperty((Property)(entry.DamageType + 140))?.Value ?? 0f);
 
             return (uint)(propertyMultiplier * baseDamage);
+        }
+
+        /// <summary>
+        /// Scale the damage of a non player caster, the property damage has diminishing returns above the value expected for the caster's level.
+        /// </summary>
+        /// <remarks>
+        /// See 0x140565600 in the client, the expected value is (level * Datafloat0 + Datafloat01) * the average stat coefficient of GameFormula 712.
+        /// </remarks>
+        private void ApplyNonPlayerScaling(IUnitEntity caster, Spell4EffectsEntry entry, ref float propertyDamage, ref float typeDamage)
+        {
+            GameFormulaEntry formulaEntry = gameTableManager.GameFormula.GetEntry(712);
+            float levelMultiplier  = formulaEntry?.Datafloat0  ?? 70f;
+            float levelBase        = formulaEntry?.Datafloat01 ?? 100f;
+            float excessMultiplier = formulaEntry?.Datafloat02 ?? 1f;
+            float divisor          = formulaEntry?.Datafloat03 ?? 2f;
+
+            uint statParameters = 0u;
+            float statCoefficients = 0f;
+            for (int i = 0; i < 4; i++)
+            {
+                if (entry.ParameterType[i] is >= SpellEffectParameterType.Brutality and <= SpellEffectParameterType.Insight
+                    or >= SpellEffectParameterType.Grit and <= SpellEffectParameterType.SupportPower)
+                {
+                    statParameters++;
+                    statCoefficients += entry.ParameterValue[i];
+                }
+            }
+
+            float expected = statParameters == 0u ? 0f : (caster.Level * levelMultiplier + levelBase) * MathF.Abs(statCoefficients / statParameters);
+            if (propertyDamage <= expected)
+                propertyDamage = divisor != 0f ? propertyDamage / divisor : 0f;
+            else
+            {
+                float excess = expected != 0f ? (propertyDamage - expected) / expected : 0f;
+                propertyDamage = ((1f - MathF.Exp(-excess)) * excessMultiplier + 1f) * (divisor != 0f ? expected / divisor : 0f);
+            }
+
+            typeDamage = divisor != 0f ? typeDamage / divisor : 0f;
         }
 
         private float CalculateBasePropertyDamage(IUnitEntity caster, Spell4EffectsEntry entry)
@@ -180,20 +219,18 @@ namespace NexusForever.Game.Combat
                         break;
                     // client defaults to a value of 0.25f if the game table entry is missing
                     case SpellEffectParameterType.AssaultPower:
-                        intermediateValue = GetProperty(Property.AssaultRating) * forumulaEntry?.Datafloat0 ?? 0.25f;
+                        intermediateValue = GetProperty(Property.AssaultRating) * (forumulaEntry?.Datafloat0 ?? 0.25f);
                         break;
                     case SpellEffectParameterType.SupportPower:
-                        intermediateValue = GetProperty(Property.SupportRating) * forumulaEntry?.Datafloat01 ?? 0.25f;
+                        intermediateValue = GetProperty(Property.SupportRating) * (forumulaEntry?.Datafloat01 ?? 0.25f);
                         break;
                 }
 
                 value += intermediateValue * entry.ParameterValue[i];
             }
 
-            if (value >= 0f)
-                return MathF.Ceiling(value);
-            else
-                return MathF.Floor(value);
+            // client rounds to the nearest integer, see 0x140566D40 in the client
+            return MathF.Round(value, MidpointRounding.AwayFromZero);
         }
 
         private float CalculateBaseEntityDamage(IUnitEntity caster, IUnitEntity target, Spell4EffectsEntry entry)
@@ -222,6 +259,7 @@ namespace NexusForever.Game.Combat
                     case SpellEffectParameterType.TargetMaxShieldCapacity:
                         intermediateValue = target.MaxShieldCapacity;
                         break;
+                    // TODO: the client uses the item budget for the caster's item level here (0x14041F1B0, GameFormula 65, 253 and 991)
                     case SpellEffectParameterType.ItemBudget:
                         intermediateValue = entry.ParameterValue[i];
                         break;
@@ -266,7 +304,7 @@ namespace NexusForever.Game.Combat
             float mitigationPct = (armorFormulaEntry.Datafloat0 / victim.Level * armorFormulaEntry.Datafloat01) * victim.GetPropertyValue(Property.Armor) / 100;
 
             if (damageType == DamageType.Physical)
-                mitigationPct += victim.GetPropertyValue(Property.DamageMitigationPctOffsetMagic);
+                mitigationPct += victim.GetPropertyValue(Property.DamageMitigationPctOffsetPhysical);
             else if (damageType == DamageType.Tech)
                 mitigationPct += victim.GetPropertyValue(Property.DamageMitigationPctOffsetTech);
             else if (damageType == DamageType.Magic)
