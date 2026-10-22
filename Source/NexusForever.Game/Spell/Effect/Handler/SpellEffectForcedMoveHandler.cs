@@ -142,22 +142,24 @@ namespace NexusForever.Game.Spell.Effect.Handler
                         mover.MovementManager.SetPosition(position, false);
                     break;
                 }
+                // the client only validates forced move data (0x140567AF0), the movement itself is sent as keys
+                // 11, 12 and 13 use the same data as the key moves and are used for knockbacks, shoves and launches (e.g. Urgent Withdrawal)
                 case SpellEffectForcedMoveType.KeyForward:
                 case SpellEffectForcedMoveType.KeyBackward:
                 case SpellEffectForcedMoveType.KeyRandom:
                 case SpellEffectForcedMoveType.KeyVelocity:
                 case SpellEffectForcedMoveType.Unknown9:
                 case SpellEffectForcedMoveType.Unknown10:
-                {
-                    //float speed = distance / (float)data.FlightTime.TotalSeconds;
-                    float spin = (data.Spin * MathF.PI * 2) / v20;
-                    forcedMovementGenerator.ForceMove(mover, position, new Vector3(angle, 0f, 0f), data.FlightTime, gravity, spin);
-                    break;
-                }
-                // seems like high jumps?? Trampoline?
                 case SpellEffectForcedMoveType.Unknown11:
                 case SpellEffectForcedMoveType.Unknown12:
                 case SpellEffectForcedMoveType.Unknown13:
+                {
+                    //float speed = distance / (float)data.FlightTime.TotalSeconds;
+                    float spin = v20 > 0f ? (data.Spin * MathF.PI * 2) / v20 : 0f;
+                    forcedMovementGenerator.ForceMove(mover, position, new Vector3(angle, 0f, 0f), data.FlightTime, gravity, spin);
+                    break;
+                }
+                // TODO: 14 and 15 are unknown, 15 needs no distance like 8 to 10 (see 0x140567AF0 in the client)
                 case SpellEffectForcedMoveType.Unknown14:
                 case SpellEffectForcedMoveType.Unknown15:
                 {
