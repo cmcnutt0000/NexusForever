@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using System.Numerics;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using NexusForever.Database.Character;
 using NexusForever.Database.Character.Model;
 using NexusForever.Game.Abstract.Entity;
@@ -135,6 +136,9 @@ namespace NexusForever.Game.Quest
         /// </summary>
         public bool IsComplete()
         {
+            if (ObjectiveInfo.IsChecklist())
+                return BitOperations.PopCount(progress) >= ObjectiveInfo.Entry.Count;
+
             return progress >= GetMaxValue();
         }
 
@@ -146,17 +150,34 @@ namespace NexusForever.Game.Quest
         /// <summary>
         /// Update object progress with supplied update.
         /// </summary>
+        /// <remarks>
+        /// For checklist objectives the update is the QuestChecklistIdx of the completed entry.
+        /// </remarks>
         public void ObjectiveUpdate(uint update)
         {
+            if (ObjectiveInfo.IsChecklist())
+            {
+                if (update < 32u && (progress & (1u << (int)update)) == 0u)
+                    Progress = progress | (1u << (int)update);
+                return;
+            }
+
             if (ObjectiveInfo.IsDynamic())
                 update = (uint)(((float)update / ObjectiveInfo.Entry.Count) * 1000f);
 
             Progress = Math.Min(progress + update, GetMaxValue());
         }
 
-       
         public void Complete()
         {
+            if (ObjectiveInfo.IsChecklist())
+            {
+                // any set bits count towards the checklist, fill from the lowest entry
+                uint count = ObjectiveInfo.Entry.Count;
+                Progress = progress | (count >= 32u ? uint.MaxValue : (1u << (int)count) - 1u);
+                return;
+            }
+
             Progress = GetMaxValue();
         }
     }

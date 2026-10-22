@@ -39,5 +39,10 @@ namespace NexusForever.Game.Abstract.Quest
         /// Quest objective progress is a percentage in tenths (0-1000) rather than a count.
         /// </summary>
         bool IsDynamic();
+
+        /// <summary>
+        /// Quest objective progress is a bitmask of completed checklist entries rather than a count.
+        /// </summary>
+        bool IsChecklist();
     }
 }

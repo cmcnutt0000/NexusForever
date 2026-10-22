@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Numerics;
+using Microsoft.Extensions.Logging;
 using NexusForever.Game.Abstract.Entity;
 using NexusForever.Game.Abstract.Prerequisite;
 using NexusForever.Game.Abstract.Quest;
@@ -77,7 +78,9 @@ namespace NexusForever.Game.Prerequisite.Check
             if (objective == null)
                 return 0u;
 
-            // TODO: the client counts the set bits of checklist objectives (Checklist, SpellSuccess2, ActivateTargetGroupChecklist, TalkToTargetGroup), quest checklist progress isn't a bitmask yet
+            if (objective.ObjectiveInfo.IsChecklist())
+                return (uint)BitOperations.PopCount(objective.Progress);
+
             return objective.ObjectiveInfo.IsDynamic() ? objective.Progress / 10u : objective.Progress;
         }
     }
