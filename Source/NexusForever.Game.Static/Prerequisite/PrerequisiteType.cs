@@ -87,7 +87,7 @@
         UnderForcedMovement         = 79, // Not under forced movement
         HealthRequirement           = 80, // You do not meet the health requirements
         WrongSpellMechanic          = 81, // Wrong spell mechanic
-        Unknown82                   = 82, // Requirements not met
+        EntityType                  = 82, // Requirements not met - unit has the EntityType in value
         Vehicle                     = 83, // Vehicle conditions not met
         Mount                       = 84, // Mount conditions not met
         Taxi                        = 85, // Taxi conditions not met
@@ -274,7 +274,7 @@
         Personal5V5ArenaRating263   = 263, // Personal arena 5v5 rating requirement not met
         Battlegrounds264            = 264, // Battlegrounds requirement not met
         Warplots265                 = 265, // Warplots requirement not met
-        Unknown266                  = 266, // Exist in PrerequisiteType.tbl but does not have a description
+        IsPet                       = 266, // Exist in PrerequisiteType.tbl but does not have a description - unit is a Pet or EsperPet
         Unknown267                  = 267, // Exist in PrerequisiteType.tbl but does not have a description
         Unknown268                  = 268, // Exist in PrerequisiteType.tbl but does not have a description
         HealthyGamingState          = 269, // Exist in PrerequisiteType.tbl but does not have a description - client compares the Healthy Gaming state with objectId
