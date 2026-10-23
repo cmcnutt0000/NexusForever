@@ -1237,16 +1237,10 @@ namespace NexusForever.Game.Entity
         /// </summary>
         private void SendInGameTime()
         {
-            uint lengthOfInGameDayInSeconds = SharedConfiguration.Instance.Get<RealmConfig>().LengthOfInGameDay;
-            if (lengthOfInGameDayInSeconds == 0u)
-                lengthOfInGameDayInSeconds = (uint)TimeSpan.FromHours(3.5d).TotalSeconds; // Live servers were 3.5h per in game day
-
-            double timeOfDay = DateTime.UtcNow.Subtract(DateTime.UnixEpoch).TotalSeconds / lengthOfInGameDayInSeconds % 1;
-
             Session.EnqueueMessageEncrypted(new ServerTimeOfDay
             {
-                TimeOfDay   = (uint)(timeOfDay * TimeSpan.FromDays(1).TotalSeconds),
-                LengthOfDay = lengthOfInGameDayInSeconds
+                TimeOfDay   = (uint)InGameTime.TimeOfDay.TotalSeconds,
+                LengthOfDay = (uint)InGameTime.LengthOfDay.TotalSeconds
             });
         }
 

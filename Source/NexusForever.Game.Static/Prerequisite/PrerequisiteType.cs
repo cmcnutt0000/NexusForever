@@ -52,7 +52,7 @@
         InTargetGroup               = 44, // You cannot do that right now
         // 45 is unused in PrerequisiteType.tbl
         Waypoint                    = 46, // Incorrect waypoint direction
-        Unknown47                   = 47, // You cannot do that right now
+        UnderSpellServer            = 47, // You cannot do that right now
         Unknown48                   = 48, // You cannot do that right now
         Schedule                    = 49, // That schedule is unavailable
         UnderSpellFromTarget        = 50, // You cannot do that now
@@ -81,7 +81,7 @@
         Vital                       = 73, // Requirements not met - Part of Vital
         ChallengeLocked             = 74, // The specified challenge is locked
         // 75 is unused in PrerequisiteType.tbl
-        Unknown76                   = 76, // Requirements not met
+        SpellStackCountServer       = 76, // Requirements not met
         AnyCCState                  = 77, // Requirements not met - unit has any CCState
         MovementMode                = 78, // Invalid movement mode
         UnderForcedMovement         = 79, // Not under forced movement
@@ -251,7 +251,7 @@
         RallyState                  = 240, // Exist in PrerequisiteType.tbl but does not have a description
         HasResidence                = 241, // Exist in PrerequisiteType.tbl but does not have a description
         LiveEvent242                = 242, // Live event not complete
-        Faction243                  = 243, // Faction requirement not met
+        SummonerFaction             = 243, // Faction requirement not met
         HasBindPoint                = 244, // Exist in PrerequisiteType.tbl but does not have a description
         DyeUnlocked                 = 245, // Exist in PrerequisiteType.tbl but does not have a description
         Inventory                   = 246, // Inventory requirement not met
