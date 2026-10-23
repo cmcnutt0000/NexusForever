@@ -119,9 +119,9 @@
         PositionalRequirement       = 108, // Requirements not met
         WorldRequirement            = 109, // World requirement not met
         PlayerPathMissionCount      = 110, // Player path mission count not correct
-        HazardProperty111           = 111, // Hazard property requirement not met
+        HazardActive                = 111, // Hazard property requirement not met
         HazardProperty112           = 112, // Hazard property requirement not met
-        HazardProperty113           = 113, // Hazard property requirement not met
+        HazardValue                 = 113, // Hazard property requirement not met
         VitalCompare                = 114, // Vital requirement not met
         UnitPropertyCompare         = 115, // Unit requirement not met
         Stealth                     = 116, // Stealth property requirement not met
@@ -130,13 +130,13 @@
         PublicEventObjectiveObject  = 119, // Public event objective object requirement not met
         PublicEvent120              = 120, // Public event requirement not met
         PublicEvent121              = 121, // Public event requirement not met.
-        PublicEventObjective122     = 122, // Public event objective not objective spawn
+        PublicEventObjectiveSpawn   = 122, // Public event objective not objective spawn
         PublicEventObjectiveCount   = 123, // Public event objective not objective spawn
         ChallengeCompletionCount    = 124, // Invalid challenge completion count
-        Challenge125                = 125, // Challenge requirement not met
+        ChallengeFlag               = 125, // Challenge requirement not met
         PathHoldout                 = 126, // Path holdout requirement not met
         PathHoldoutPlayer           = 127, // Path holdout requirement for player not met
-        Faction128                  = 128, // Faction requirement not met
+        FactionRelationship         = 128, // Faction requirement not met
         SpellObj                    = 129, // Spell requirement not met
         SpellObjFromTarget          = 130, // Spell requirement not met
         Level131                    = 131, // Level requirement not met
@@ -168,9 +168,9 @@
         // 157 is unused in PrerequisiteType.tbl
         // 158 is unused in PrerequisiteType.tbl
         PositionalRequirementTarget = 159, // Requirements not met
-        Challenge160                = 160, // Challenge requirement not met
+        ChallengeValue              = 160, // Challenge requirement not met
         // 161 is unused in PrerequisiteType.tbl
-        PublicEventObjective2       = 162, // Public event objective requirement not met
+        PublicEventObjectiveCompletion = 162, // Public event objective requirement not met
         PublicEventParticipantCount = 163, // Public event participant count requirement not met
         PublicEventParticipant164   = 164, // Public event participant requirement not met
         // 165 is unused in PrerequisiteType.tbl
@@ -186,15 +186,15 @@
         TradeSkill                  = 175, // Tradeskill requirement not met
         ChallengeObject             = 176, // Challenge object requirement not met
         TrueLevel                   = 177, // True level requirement not met
-        Item7                       = 178, // Item of type Equipped?
-        Unknown179                  = 179, // Requirements not met
+        ItemSlotEquipped            = 178, // Item of type Equipped?
+        CreatureDifficulty          = 179, // Requirements not met
         Unknown180                  = 180, // Requirements not met
         // 181 is unused in PrerequisiteType.tbl
         HouseOwnership              = 182, // Housing ownership requirement not met
         Guild                       = 183, // Guild requirement not met
         Guild2                      = 184, // Guild requirement not met
         GuildPerk                   = 185, // Guild perk requirement not met
-        Unknown186                  = 186, // Requirements not met
+        ResidencePermission         = 186, // Requirements not met
         WarplotPlugUpgrade          = 187, // Warplot plug upgrade tier requirement not met
         WarplotPermission           = 188, // Warplot permission requirement not met
         Unknown189                  = 189, // Exist in PrerequisiteType.tbl but does not have a description
@@ -207,8 +207,8 @@
         Racial                      = 196, // Racial requirement not met
         GliderUsage                 = 197, // Gliders cannot be used in this area
         SpaceshipUsage              = 198, // Spaceships cannot be used in this area
-        PublicEvent199              = 199, // Public event requirement not met
-        PublicEventObjective200     = 200, // Public event objective requirement not met
+        PublicEventInProgress       = 199, // Public event requirement not met
+        PublicEventObjectiveBusy    = 200, // Public event objective requirement not met
         AchievementObject           = 201, // Achievement object requirement not met
         // 202 is unused in PrerequisiteType.tbl
         Unknown203                  = 203, // Exist in PrerequisiteType.tbl but does not have a description
@@ -256,7 +256,7 @@
         DyeUnlocked                 = 245, // Exist in PrerequisiteType.tbl but does not have a description
         Inventory                   = 246, // Inventory requirement not met
         // 247 is unused in PrerequisiteType.tbl
-        Unknown248                  = 248, // Exist in PrerequisiteType.tbl but does not have a description
+        PublicEventObjectiveCounter = 248, // Exist in PrerequisiteType.tbl but does not have a description
         // 249 is unused in PrerequisiteType.tbl
         BaseFaction                 = 250, // Base faction requirement not met
         Personal2V2ArenaRating251   = 251, // Personal arena 2v2 rating requirement not met
