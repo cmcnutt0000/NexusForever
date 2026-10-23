@@ -149,6 +149,14 @@ namespace NexusForever.Game.Combat
         /// </summary>
         private uint CalculateBaseDamage(IUnitEntity caster, IUnitEntity target, Spell4EffectsEntry entry)
         {
+            return (uint)CalculateEffectMagnitude(caster, target, entry);
+        }
+
+        /// <summary>
+        /// Return the magnitude of the <see cref="Spell4EffectsEntry"/> parameters cast by the <see cref="IUnitEntity"/> on the target, see 0x140565600 in the client.
+        /// </summary>
+        public float CalculateEffectMagnitude(IUnitEntity caster, IUnitEntity target, Spell4EffectsEntry entry)
+        {
             float basePropertyDamage = CalculateBasePropertyDamage(caster, entry);
             float baseEntityDamage   = CalculateBaseEntityDamage(caster, target, entry);
 
@@ -185,7 +193,7 @@ namespace NexusForever.Game.Combat
             float minimumMultiplier = entry.EffectType is SpellEffectType.Damage or SpellEffectType.Transference or SpellEffectType.DamageShields ? 0f : 1f;
             float propertyMultiplier = MathF.Max(minimumMultiplier, caster.GetProperty((Property)(entry.DamageType + 140))?.Value ?? 0f);
 
-            return (uint)(propertyMultiplier * baseDamage);
+            return propertyMultiplier * baseDamage;
         }
 
         /// <summary>
@@ -305,6 +313,9 @@ namespace NexusForever.Game.Combat
                     // TODO: use the item's level for spells cast by an item
                     case SpellEffectParameterType.ItemBudget:
                         intermediateValue = GetItemBudget(caster.Level);
+                        // property modifiers scale the budget by the property's value per point, see 0x1404DE840 in the client
+                        if (entry.EffectType == SpellEffectType.UnitPropertyModifier)
+                            intermediateValue *= gameTableManager.UnitProperty2.GetEntry(entry.DataBits00)?.ValuePerPoint ?? 1f;
                         break;
                     case SpellEffectParameterType.TargetCurrentHealth:
                         intermediateValue = target.Health;

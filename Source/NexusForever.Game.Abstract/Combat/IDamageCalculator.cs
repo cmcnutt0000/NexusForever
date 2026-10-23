@@ -2,6 +2,7 @@
 using NexusForever.Game.Abstract.Spell;
 using NexusForever.Game.Abstract.Spell.Target;
 using NexusForever.Game.Static.Spell;
+using NexusForever.GameTable.Model;
 
 namespace NexusForever.Game.Abstract.Combat
 {
@@ -19,5 +20,10 @@ namespace NexusForever.Game.Abstract.Combat
         /// Calculates the heal and updates the referenced <see cref="ISpellTargetEffectInfo"/> appropriately.
         /// </summary>
         void CalculateHeal(ISpellExecutionContext executionContext, IUnitEntity target, ISpellTargetEffectInfo info, DamageType damageType);
+
+        /// <summary>
+        /// Return the magnitude of the <see cref="Spell4EffectsEntry"/> parameters cast by the <see cref="IUnitEntity"/> on the target.
+        /// </summary>
+        float CalculateEffectMagnitude(IUnitEntity caster, IUnitEntity target, Spell4EffectsEntry entry);
     }
 }
