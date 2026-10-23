@@ -521,7 +521,7 @@ namespace NexusForever.Game.Entity
             if (!target.IsValidAttackTarget(this) || !IsValidAttackTarget(target))
                 return false;
 
-            return GetDispositionTo(target.Faction1) < Disposition.Friendly;
+            return GetDispositionTo(target) < Disposition.Friendly;
         }
 
         /// <summary>

@@ -184,7 +184,7 @@ namespace NexusForever.Script.Main.AI
             if (source is not IUnitEntity unit)
                 return;
 
-            if (entity.GetDispositionTo(unit.Faction1) != Disposition.Hostile)
+            if (entity.GetDispositionTo(unit) != Disposition.Hostile)
                 return;
 
             var spellParameters = spellParametersFactory.Resolve();

@@ -233,6 +233,11 @@ namespace NexusForever.Game.Abstract.Entity
         Disposition GetDispositionTo(Faction factionId, bool primary = true);
 
         /// <summary>
+        /// Return <see cref="Disposition"/> between <see cref="IWorldEntity"/> and another <see cref="IWorldEntity"/>.
+        /// </summary>
+        Disposition GetDispositionTo(IWorldEntity entity);
+
+        /// <summary>
         /// Broadcast NPC say chat message to <see cref="IPlayer"/> in supplied range.
         /// </summary>
         void NpcSay(string text, float range = 155f);

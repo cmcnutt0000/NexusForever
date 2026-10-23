@@ -1144,40 +1144,36 @@ namespace NexusForever.Game.Entity
         /// <summary>
         /// Return <see cref="Disposition"/> between <see cref="IWorldEntity"/> and <see cref="Faction"/>.
         /// </summary>
+        /// <remarks>
+        /// See 0x140787830 in the client, the faction level of the default reputation decides it and a unit without a faction is neutral.
+        /// </remarks>
         public virtual Disposition GetDispositionTo(Faction factionId, bool primary = true)
         {
             IFactionNode targetFaction = FactionManager.Instance.GetFaction(factionId);
             if (targetFaction == null)
                 throw new ArgumentException($"Invalid faction {factionId}!");
 
-            // find disposition based on faction friendships
-            Disposition? dispositionFromFactionTarget = GetDispositionFromFactionFriendship(targetFaction, primary ? Faction1 : Faction2);
-            if (dispositionFromFactionTarget.HasValue)
-                return dispositionFromFactionTarget.Value;
-
             IFactionNode invokeFaction = FactionManager.Instance.GetFaction(primary ? Faction1 : Faction2);
-            Disposition? dispositionFromFactionInvoker = GetDispositionFromFactionFriendship(invokeFaction, factionId);
-            if (dispositionFromFactionInvoker.HasValue)
-                return dispositionFromFactionInvoker.Value;
+            if (invokeFaction == null)
+                return Disposition.Neutral;
 
-            // TODO: client does a few more checks, might not be 100% accurate
-
-            // default to neutral if we have no disposition from other sources
-            return Disposition.Neutral;
+            return FactionNode.GetDisposition(FactionNode.GetFactionLevel(invokeFaction.GetDefaultReputation(targetFaction)));
         }
 
-        private Disposition? GetDispositionFromFactionFriendship(IFactionNode node, Faction factionId)
+        /// <summary>
+        /// Return <see cref="Disposition"/> between <see cref="IWorldEntity"/> and another <see cref="IWorldEntity"/>.
+        /// </summary>
+        /// <remarks>
+        /// See 0x14045A950 in the client, a unit summoned by a player counts as that player.
+        /// TODO: the client also makes duel opponents hostile, honours a per unit hostility list and has a friendly group check.
+        /// </remarks>
+        public Disposition GetDispositionTo(IWorldEntity entity)
         {
-            if (node == null)
-                return null;
+            IWorldEntity target = entity;
+            if (entity is not IPlayer && entity.SummonerGuid is uint summonerGuid && GetVisible<IWorldEntity>(summonerGuid) is IPlayer summoner)
+                target = summoner;
 
-            // check if current node has required friendship
-            FactionLevel? level = node.GetFriendshipFactionLevel(factionId);
-            if (level.HasValue)
-                return FactionNode.GetDisposition(level.Value);
-
-            // check if parent node has required friendship
-            return GetDispositionFromFactionFriendship(node.Parent, factionId);
+            return GetDispositionTo(target.Faction1);
         }
 
         private IChatMessageBuilder BuildNpcChat(string text, ChatChannelType type)

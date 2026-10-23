@@ -225,10 +225,11 @@ namespace NexusForever.Game.Spell
             if (!CanCast())
                 return false;
 
-            // TODO: Handle all GlobalCooldownEnums. It looks like it's just a "Type" that the GCD is stored against. Each spell checks the GCD for its type.
+            // only global cooldown enums 0 and 1 start the global cooldown, see 0x14046AFC0 in the client
+            // TODO: the client stores it against the SpellCoolDown row rather than the enum and applies the unit's cooldown modifiers (0x14046A760)
             if (Caster is IPlayer player)
             {
-                if (Parameters.SpellInfo.GlobalCooldown != null && !Parameters.IsProxy)
+                if (Parameters.SpellInfo.GlobalCooldown != null && Parameters.SpellInfo.Entry.GlobalCooldownEnum < 2u && !Parameters.IsProxy)
                     player.SpellManager.SetGlobalSpellCooldown(Parameters.SpellInfo.Entry.GlobalCooldownEnum, Parameters.SpellInfo.GlobalCooldown.CooldownTime / 1000d);
                 else if (Parameters.IsProxy)
                     player.SpellManager.SetSpellCooldown(Parameters.SpellInfo, Parameters.CooldownOverride / 1000d);

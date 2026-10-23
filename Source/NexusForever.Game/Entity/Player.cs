@@ -1395,26 +1395,15 @@ namespace NexusForever.Game.Entity
             if (targetFaction == null)
                 throw new ArgumentException($"Invalid faction {factionId}!");
 
-            // find disposition based on reputation level
-            Disposition? dispositionFromReputation = GetDispositionFromReputation(targetFaction);
-            if (dispositionFromReputation.HasValue)
-                return dispositionFromReputation.Value;
+            // only the player's base faction reads reputations and only for the exact faction, see 0x140787760 in the client
+            if (!primary || Faction1 == Faction2)
+            {
+                IReputation reputation = ReputationManager.GetReputation(factionId);
+                if (reputation != null)
+                    return FactionNode.GetDisposition(FactionNode.GetFactionLevel(reputation.Amount));
+            }
 
             return base.GetDispositionTo(factionId, primary);
-        }
-
-        private Disposition? GetDispositionFromReputation(IFactionNode node)
-        {
-            if (node == null)
-                return null;
-
-            // check if current node has required reputation
-            IReputation reputation = ReputationManager.GetReputation(node.FactionId);
-            if (reputation != null)
-                return FactionNode.GetDisposition(FactionNode.GetFactionLevel(reputation.Amount));
-
-            // check if parent node has required reputation
-            return GetDispositionFromReputation(node.Parent);
         }
 
         /// <summary>

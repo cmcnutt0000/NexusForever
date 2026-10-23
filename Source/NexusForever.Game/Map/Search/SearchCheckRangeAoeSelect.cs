@@ -41,13 +41,13 @@ namespace NexusForever.Game.Map.Search
             {
                 // TODO: handle other things like "Is Immune", "Is Player and PvP Enabled"
 
-                if ((searcher as IUnitEntity).GetDispositionTo(entity.Faction1, true) > Disposition.Neutral)
+                if ((searcher as IUnitEntity).GetDispositionTo(entity) > Disposition.Neutral)
                     return false;
             }
 
             if (targetMechanicFlags.HasFlag(SpellTargetMechanicFlags.IsFriendly))
             {
-                if ((searcher as IUnitEntity).GetDispositionTo(entity.Faction1, true) < Disposition.Neutral)
+                if ((searcher as IUnitEntity).GetDispositionTo(entity) < Disposition.Neutral)
                     return false;
             } 
 
