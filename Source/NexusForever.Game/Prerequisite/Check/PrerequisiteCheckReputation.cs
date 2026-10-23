@@ -16,12 +16,6 @@ namespace NexusForever.Game.Prerequisite.Check
     [PrerequisiteCheck(PrerequisiteType.Reputation)]
     public class PrerequisiteCheckReputation : IPrerequisiteCheck
     {
-        // reputation for each FactionLevel, see 0x1407A2950 in the client
-        private static readonly float[] levelReputation =
-        [
-            -32000f, -16000f, -8000f, -4000f, -2000f, 0f, 2000f, 4000f, 8000f, 16000f, 32000f
-        ];
-
         #region Dependency Injection
 
         private readonly ILogger<PrerequisiteCheckReputation> log;
@@ -61,19 +55,8 @@ namespace NexusForever.Game.Prerequisite.Check
                     return reputation.Amount;
             }
 
-            // otherwise the first relationship from the unit's faction or one of its parents to the faction or one of its parents
-            IFactionNode unitNode = factionManager.GetFaction(unit.Faction1);
-            for (IFactionNode target = targetNode; target != null; target = target.Parent)
-            {
-                for (IFactionNode node = unitNode; node != null; node = node.Parent)
-                {
-                    IRelationshipNode relationship = node.GetRelationships().FirstOrDefault(r => r.Id == target.FactionId);
-                    if (relationship != null)
-                        return relationship.Entry.FactionLevel < levelReputation.Length ? levelReputation[relationship.Entry.FactionLevel] : 0f;
-                }
-            }
-
-            return factionId == unit.Faction1 ? levelReputation[(int)FactionLevel.Beloved] : 0f;
+            // otherwise the default of the unit's current faction
+            return factionManager.GetFaction(unit.Faction1)?.GetDefaultReputation(targetNode) ?? 0f;
         }
     }
 }

@@ -11,6 +11,9 @@ namespace NexusForever.Game.Reputation
         /// <summary>
         /// Return faction level based on supplied reputation.
         /// </summary>
+        /// <remarks>
+        /// See 0x1407A2A00 in the client, negative levels include their lower bound rather than their upper one.
+        /// </remarks>
         public static FactionLevel GetFactionLevel(float reputation)
         {
             if (reputation >= 32000f)
@@ -23,18 +26,53 @@ namespace NexusForever.Game.Reputation
                 return FactionLevel.Accepted;
             if (reputation >= 2000f)
                 return FactionLevel.Liked;
-            if (reputation >= 0f)
+            if (reputation > -2000f)
                 return FactionLevel.Neutral;
-            if (reputation >= -2000f)
+            if (reputation > -4000f)
                 return FactionLevel.Wary;
-            if (reputation >= -4000f)
+            if (reputation > -8000f)
                 return FactionLevel.Disliked;
-            if (reputation >= -8000f)
+            if (reputation > -16000f)
                 return FactionLevel.Shunned;
-            if (reputation >= -16000f)
+            if (reputation > -32000f)
                 return FactionLevel.Hated;
 
             return FactionLevel.Reviled;
+        }
+
+        /// <summary>
+        /// Return reputation for supplied <see cref="FactionLevel"/>.
+        /// </summary>
+        /// <remarks>
+        /// See 0x1407A2950 in the client, unknown levels are 0.
+        /// </remarks>
+        public static float GetReputation(FactionLevel factionLevel)
+        {
+            switch (factionLevel)
+            {
+                case FactionLevel.Reviled:
+                    return -32000f;
+                case FactionLevel.Hated:
+                    return -16000f;
+                case FactionLevel.Shunned:
+                    return -8000f;
+                case FactionLevel.Disliked:
+                    return -4000f;
+                case FactionLevel.Wary:
+                    return -2000f;
+                case FactionLevel.Liked:
+                    return 2000f;
+                case FactionLevel.Accepted:
+                    return 4000f;
+                case FactionLevel.Popular:
+                    return 8000f;
+                case FactionLevel.Esteemed:
+                    return 16000f;
+                case FactionLevel.Beloved:
+                    return 32000f;
+                default:
+                    return 0f;
+            }
         }
 
         /// <summary>
@@ -129,6 +167,41 @@ namespace NexusForever.Game.Reputation
         public IEnumerable<IRelationshipNode> GetRelationships()
         {
             return relationships;
+        }
+
+        /// <summary>
+        /// Return the reputation a unit of this faction has with the supplied <see cref="IFactionNode"/> when none is stored.
+        /// </summary>
+        /// <remarks>
+        /// See 0x140787690 in the client, the first relationship from this faction or a parent of it to the faction or a parent of it.
+        /// Without one the reputation is 32000 with this faction and 0 with any other.
+        /// </remarks>
+        public float GetDefaultReputation(IFactionNode targetFaction)
+        {
+            for (IFactionNode target = targetFaction; target != null; target = target.Parent)
+            {
+                for (IFactionNode node = this; node != null; node = node.Parent)
+                {
+                    Faction2RelationshipEntry relationship = GetRelationship(node, target);
+                    if (relationship != null)
+                        return GetReputation((FactionLevel)relationship.FactionLevel);
+                }
+            }
+
+            return targetFaction.FactionId == FactionId ? GetReputation(FactionLevel.Beloved) : 0f;
+        }
+
+        private static Faction2RelationshipEntry GetRelationship(IFactionNode node, IFactionNode target)
+        {
+            // the client links each relationship to both of its factions and keeps the first one for each pair, see 0x1407171F0 in the client
+            Faction2RelationshipEntry forward  = node.GetRelationships().FirstOrDefault(r => r.Id == target.FactionId)?.Entry;
+            Faction2RelationshipEntry backward = target.GetRelationships().FirstOrDefault(r => r.Id == node.FactionId)?.Entry;
+            if (forward == null)
+                return backward;
+            if (backward == null)
+                return forward;
+
+            return forward.Id <= backward.Id ? forward : backward;
         }
 
         /// <summary>

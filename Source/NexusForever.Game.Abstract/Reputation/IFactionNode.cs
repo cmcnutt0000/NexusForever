@@ -28,6 +28,11 @@ namespace NexusForever.Game.Abstract.Reputation
         IEnumerable<IRelationshipNode> GetRelationships();
 
         /// <summary>
+        /// Return the reputation a unit of this faction has with the supplied <see cref="IFactionNode"/> when none is stored.
+        /// </summary>
+        float GetDefaultReputation(IFactionNode targetFaction);
+
+        /// <summary>
         /// Return <see cref="FactionLevel"/> 
         /// </summary>
         FactionLevel? GetFriendshipFactionLevel(Faction factionId);

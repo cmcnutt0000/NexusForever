@@ -51,9 +51,15 @@ namespace NexusForever.Game.Reputation
             if (faction == null)
                 throw new ArgumentException($"Invalid faction id {factionId}!");
 
+            // the client ignores changes of nothing and changes to the player's own base faction, see 0x1403CAE70 in the client
+            if (value == 0f || factionId == owner.Faction2)
+                return;
+
             if (!reputations.TryGetValue(factionId, out IReputation reputation))
             {
-                reputation = new Reputation(owner, faction, value);
+                // the client starts a new reputation from the default of the player's base faction rather than 0
+                float defaultReputation = FactionManager.Instance.GetFaction(owner.Faction2)?.GetDefaultReputation(faction) ?? 0f;
+                reputation = new Reputation(owner, faction, defaultReputation + value);
                 reputations.Add(reputation.Id, reputation);
             }
             else
