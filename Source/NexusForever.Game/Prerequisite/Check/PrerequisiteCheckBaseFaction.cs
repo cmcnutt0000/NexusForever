@@ -6,6 +6,12 @@ using NexusForever.Game.Static.Reputation;
 
 namespace NexusForever.Game.Prerequisite.Check
 {
+    /// <summary>
+    /// Checks the unit's base faction, which a temporary faction doesn't replace, against value.
+    /// </summary>
+    /// <remarks>
+    /// See 0x14049C6A0 in the client (unit+0x110), the client sets it from Faction2 of ServerEntityCreate.
+    /// </remarks>
     [PrerequisiteCheck(PrerequisiteType.BaseFaction)]
     public class PrerequisiteCheckBaseFaction : IPrerequisiteCheck
     {
@@ -26,9 +32,9 @@ namespace NexusForever.Game.Prerequisite.Check
             switch (comparison)
             {
                 case PrerequisiteComparison.Equal:
-                    return subject.Faction1 == (Faction)value;
+                    return subject.Faction2 == (Faction)value;
                 case PrerequisiteComparison.NotEqual:
-                    return subject.Faction1 != (Faction)value;
+                    return subject.Faction2 != (Faction)value;
                 default:
                     log.LogWarning($"Unhandled PrerequisiteComparison {comparison} for {PrerequisiteType.BaseFaction}!");
                     return false;
