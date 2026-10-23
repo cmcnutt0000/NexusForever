@@ -311,29 +311,23 @@ namespace NexusForever.Game.Entity
         /// <summary>
         /// Return the display id for <see cref="IItemInfo"/>.
         /// </summary>
+        /// <remarks>
+        /// See 0x1404445D0 and 0x140444130 in the client: the item's own display wins, otherwise the first display source entry
+        /// for the item's source and type whose level range holds the item's power level. Items flagged <see cref="ItemFlags.Depreciated"/> skip the lookup.
+        /// </remarks>
         public ushort GetDisplayId()
         {
-            if (Entry.ItemSourceId == 0u)
+            if (Entry.ItemDisplayId != 0u)
                 return (ushort)Entry.ItemDisplayId;
 
-            List<ItemDisplaySourceEntryEntry> entries = AssetManager.Instance.GetItemDisplaySource(Entry.ItemSourceId)
-                .Where(e => e.Item2TypeId == Entry.Item2TypeId)
-                .ToList();
+            if (Entry.ItemSourceId == 0u || (Entry.Flags & ItemFlags.Depreciated) != 0)
+                return 0;
 
-            if (entries.Count == 1)
-                return (ushort)entries[0].ItemDisplayId;
-            else if (entries.Count > 1)
-            {
-                if (Entry.ItemDisplayId > 0)
-                    return (ushort)Entry.ItemDisplayId; // This is what the preview window shows for "Frozen Wrangler Mitts" (Item2Id: 28366).
-
-                ItemDisplaySourceEntryEntry fallbackVisual = entries.FirstOrDefault(e => Entry.PowerLevel >= e.ItemMinLevel && Entry.PowerLevel <= e.ItemMaxLevel);
-                if (fallbackVisual != null)
-                    return (ushort)fallbackVisual.ItemDisplayId;
-            }
-
-            // TODO: research this...
-            throw new NotImplementedException();
+            ItemDisplaySourceEntryEntry entry = AssetManager.Instance.GetItemDisplaySource(Entry.ItemSourceId)
+                ?.FirstOrDefault(e => e.Item2TypeId == Entry.Item2TypeId
+                    && Entry.PowerLevel >= e.ItemMinLevel
+                    && Entry.PowerLevel <= e.ItemMaxLevel);
+            return (ushort)(entry?.ItemDisplayId ?? 0u);
         }
 
         /// <summary>
