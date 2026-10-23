@@ -28,6 +28,10 @@ namespace NexusForever.Game.Entity
         /// <summary>
         /// Return dye ramp mask generated from supplied dyes.
         /// </summary>
+        /// <remarks>
+        /// Matches 0x1401DC0D0 in the client. The dyes are <see cref="DyeColorRampEntry"/> ids, bit 31 marks the mask as custom
+        /// and a channel of 0 is filled from the item's colour set by the client (0x1403DA490).
+        /// </remarks>
         public static int GenerateDyeMask(uint[] dyes)
         {
             int[] ramps = new int[MaxCostumeItemDyes];
@@ -37,6 +41,9 @@ namespace NexusForever.Game.Entity
                     continue;
 
                 DyeColorRampEntry entry = GameTableManager.Instance.DyeColorRamp.GetEntry(dyes[i]);
+                if (entry == null)
+                    continue;
+
                 ramps[i] = (int)entry.RampIndex;
             }
 
@@ -174,9 +181,10 @@ namespace NexusForever.Game.Entity
         {
             return new ItemVisual
             {
-                Slot      = ItemSlot,
-                DisplayId = DisplayId,
-                DyeData   = DyeData
+                Slot        = ItemSlot,
+                DisplayId   = DisplayId,
+                ColourSetId = (ushort)(ItemInfo?.Entry.ItemColorSetId ?? 0u),
+                DyeData     = DyeData
             };
         }
     }

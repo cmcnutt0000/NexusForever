@@ -36,9 +36,9 @@ namespace NexusForever.Game.Entity
             {
                 SellPriceMultiplier = SellPriceMultiplier,
                 BuyPriceMultiplier  = BuyPriceMultiplier,
-                Unknown2            = true,
-                Unknown3            = true,
-                Unknown4            = false
+                OpenWindow          = true,
+                FullUpdate          = true,
+                CloseWindow         = false
             };
 
             foreach (EntityVendorCategoryModel category in Categories)
@@ -56,7 +56,6 @@ namespace NexusForever.Game.Entity
                     Index         = item.Index,
                     ItemId        = item.ItemId,
                     CategoryIndex = item.CategoryIndex,
-                    Unknown6      = 0,
                     ExtraCost1 = new ServerVendorItemsUpdated.Item.ItemExtraCost()
                     {
                         ExtraCostType    = item.ExtraCost1Type,

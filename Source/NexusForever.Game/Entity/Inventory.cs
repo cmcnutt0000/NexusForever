@@ -201,10 +201,12 @@ namespace NexusForever.Game.Entity
                 if (!IsVisualItemSlot(item.Location, item.BagIndex))
                     continue;
 
+                // the client only applies an item's default dyes when the colour set is sent, see 0x1403DA490 in the client
                 yield return new ItemVisual
                 {
-                    Slot      = (ItemSlot)item.Info.TypeEntry.ItemSlotId,
-                    DisplayId = item.Info.GetDisplayId()
+                    Slot        = (ItemSlot)item.Info.TypeEntry.ItemSlotId,
+                    DisplayId   = item.Info.GetDisplayId(),
+                    ColourSetId = (ushort)item.Info.Entry.ItemColorSetId
                 };
             }
         }
