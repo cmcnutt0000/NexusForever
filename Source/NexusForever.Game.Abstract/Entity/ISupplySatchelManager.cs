@@ -41,5 +41,10 @@ namespace NexusForever.Game.Abstract.Entity
         /// Returns whether there is enough of the given material
         /// </summary>
         bool CanAfford(ushort materialId, uint amount);
+
+        /// <summary>
+        /// Returns the amount of the <see cref="ITradeskillMaterial"/> associated with the given item id
+        /// </summary>
+        uint GetAmount(uint itemId);
     }
 }

@@ -254,7 +254,7 @@
         Faction243                  = 243, // Faction requirement not met
         Unknown244                  = 244, // Exist in PrerequisiteType.tbl but does not have a description
         Unknown245                  = 245, // Exist in PrerequisiteType.tbl but does not have a description
-        Inventory                   = 246, // Inventory requirement not met - AccountItemClaimed?
+        Inventory                   = 246, // Inventory requirement not met
         // 247 is unused in PrerequisiteType.tbl
         Unknown248                  = 248, // Exist in PrerequisiteType.tbl but does not have a description
         // 249 is unused in PrerequisiteType.tbl

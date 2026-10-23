@@ -193,6 +193,24 @@ namespace NexusForever.Game.Entity
                 return false;
         }
 
+        /// <summary>
+        /// Returns the amount of the <see cref="ITradeskillMaterial"/> associated with the given item id
+        /// </summary>
+        public uint GetAmount(uint itemId)
+        {
+            if (itemId == 0u)
+                return 0u;
+
+            TradeskillMaterialEntry entry = GameTableManager.Instance.TradeskillMaterial.Entries.SingleOrDefault(i => i.Item2IdStatRevolution == itemId);
+            if (entry == null)
+                return 0u;
+
+            if (tradeskillMaterials.TryGetValue((ushort)entry.Id, out ITradeskillMaterial material))
+                return material.Amount;
+            else
+                return 0u;
+        }
+
         private void SendSupplySatchelStackUpdate(ushort materialId)
         {
             player.Session.EnqueueMessageEncrypted(new ServerSupplySatchelUpdate
