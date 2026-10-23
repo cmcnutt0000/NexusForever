@@ -106,10 +106,11 @@ namespace NexusForever.IO.Map
 
         private ZoneBoundFlags GetZoneBoundFlags(Vector3 vector)
         {
+            // 64 samples cover the 32 unit cell, sampling every other one lost the half unit detail along zone edges (0.24% of samples in Western)
             float x = vector.X + MapDefines.WorldGridOrigin * MapDefines.GridSize;
             float z = vector.Z + MapDefines.WorldGridOrigin * MapDefines.GridSize;
-            uint localX = ((uint)Math.Floor(x) & 31) * 2;
-            uint localZ = ((uint)Math.Floor(z) & 31) * 2;
+            uint localX = (uint)Math.Floor(x * 2f) & 63;
+            uint localZ = (uint)Math.Floor(z * 2f) & 63;
             return (ZoneBoundFlags)worldZoneBounds[localX, localZ];
         }
 
