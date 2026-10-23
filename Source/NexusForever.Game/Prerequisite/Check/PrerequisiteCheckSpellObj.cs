@@ -5,6 +5,12 @@ using NexusForever.Game.Static.Prerequisite;
 
 namespace NexusForever.Game.Prerequisite.Check
 {
+    /// <summary>
+    /// Checks if a spell in the spell group in objectId, from any caster, is affecting the unit.
+    /// </summary>
+    /// <remarks>
+    /// See 0x1404A2100 (case 129) in the client, objectId is a Spell4GroupList spell group id.
+    /// </remarks>
     [PrerequisiteCheck(PrerequisiteType.SpellObj)]
     internal class PrerequisiteCheckSpellObj : IPrerequisiteCheck
     {
@@ -22,18 +28,16 @@ namespace NexusForever.Game.Prerequisite.Check
 
         public bool Meets(IUnitEntity subject, PrerequisiteComparison comparison, uint value, uint objectId, IPrerequisiteParameters parameters)
         {
-            // objectId is a spell group id (Spell4GroupList), the client checks for an aura on the unit from a spell in that group, see 0x1404A2B5A in the client
-            // TODO: the client also counts auras applied by other units, spells are currently only tracked on the caster
-            bool hasSpell = subject.GetSpellsByGroupId(objectId).Any(s => !s.IsCasting && !s.IsFinished);
+            bool isAffected = subject.IsAffectedBySpellGroup(objectId);
 
             switch (comparison)
             {
                 case PrerequisiteComparison.Equal:
-                    return hasSpell;
+                    return isAffected;
                 case PrerequisiteComparison.NotEqual:
-                    return !hasSpell;
+                    return !isAffected;
                 default:
-                    log.LogWarning($"Unhandled {comparison} for {PrerequisiteType.SpellObj}!");
+                    log.LogWarning($"Unhandled PrerequisiteComparison {comparison} for {PrerequisiteType.SpellObj}!");
                     return false;
             }
         }

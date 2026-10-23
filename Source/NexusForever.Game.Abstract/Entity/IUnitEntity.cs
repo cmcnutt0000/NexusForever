@@ -1,6 +1,7 @@
 using NexusForever.Game.Abstract.Combat;
 using NexusForever.Game.Abstract.Spell;
 using NexusForever.Game.Abstract.Spell.Proc;
+using NexusForever.Game.Abstract.Spell.Target;
 using NexusForever.Game.Combat.CrowdControl;
 using NexusForever.Game.Static.Entity;
 using NexusForever.Game.Static.Spell;
@@ -72,6 +73,16 @@ namespace NexusForever.Game.Abstract.Entity
         /// Return a collection of <see cref="ISpell"/> that are applying the supplied <see cref="SpellEffectType"/> to entity.
         /// </summary>
         IEnumerable<ISpell> GetSpellsByEffect(SpellEffectType type);
+
+        /// <summary>
+        /// Add the <see cref="ISpellTargetInfo"/> of a spell, from any caster, that is affecting this <see cref="IUnitEntity"/>.
+        /// </summary>
+        void AddAffectingSpell(ISpellTargetInfo targetInfo);
+
+        /// <summary>
+        /// Return the <see cref="ISpellTargetInfo"/> of every spell, from any caster, that is currently affecting this <see cref="IUnitEntity"/>.
+        /// </summary>
+        IEnumerable<ISpellTargetInfo> GetAffectingSpells();
 
         /// <summary>
         /// Check if this <see cref="IUnitEntity"/> has a spell active with the provided <see cref="Spell4Entry"/> Id

@@ -55,7 +55,7 @@
         Unknown47                   = 47, // You cannot do that right now
         Unknown48                   = 48, // You cannot do that right now
         Schedule                    = 49, // That schedule is unavailable
-        Unknown50                   = 50, // You cannot do that now
+        UnderSpellFromTarget        = 50, // You cannot do that now
         ItemQuantity                = 51, // You do not have the correct number of items
         Path                        = 52, // You do not meet the player path requirement
         PathEpisode                 = 53, // You do not meet the player path episode requirement
@@ -64,8 +64,8 @@
         CCState                     = 56, // Requirements not met - unit has the CCState in value
         // 57 is unused in PrerequisiteType.tbl
         // 58 is unused in PrerequisiteType.tbl
-        Spell59                     = 59, // Spell requirements not met
-        Spell60                     = 60, // Spell requirements not met
+        SpellStackCount             = 59, // Spell requirements not met
+        SpellStackCountFromTarget   = 60, // Spell requirements not met
         PathMissionCount            = 61, // Path mission count is incorrect 
         ScanCreature                = 62, // Unable to scan this creature - Probably HasScannedCreature
         Unknown63                   = 63, // Requirements not met
@@ -138,7 +138,7 @@
         PathHoldoutPlayer           = 127, // Path holdout requirement for player not met
         Faction128                  = 128, // Faction requirement not met
         SpellObj                    = 129, // Spell requirement not met
-        Spell130                    = 130, // Spell requirement not met
+        SpellObjFromTarget          = 130, // Spell requirement not met
         Level131                    = 131, // Level requirement not met
         // 132 is unused in PrerequisiteType.tbl
         Item133                     = 133, // Item requirement not met
@@ -287,8 +287,8 @@
         OutOfBounds                 = 276, // You're out of bounds
         Unknown277                  = 277, // You cannot do that right now
         Unknown278                  = 278, // Requirements not met
-        Spell279                    = 279, // Spell requirement not met
-        Spell280                    = 280, // Spell requirement not met
+        UnderSpellAndTarget         = 279, // Spell requirement not met
+        SpellStackCountAndTarget    = 280, // Spell requirement not met
         Falling                     = 281, // Falling requirement not met
         // 282 is unused in PrerequisiteType.tbl
         Unknown283                  = 283, // Marked as N/A

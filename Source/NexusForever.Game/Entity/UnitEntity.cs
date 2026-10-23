@@ -95,6 +95,9 @@ namespace NexusForever.Game.Entity
         private readonly List<ISpell> pendingSpells = [];
         private readonly Dictionary<uint, ISpell> spells = [];
 
+        // spells from any caster that target this unit, the client keeps the same list on each unit, see 0x1404A4EC0 in the client
+        private readonly List<ISpellTargetInfo> affectingSpells = [];
+
         private readonly Dictionary<Property, Dictionary</*spell4Id*/uint, ISpellPropertyModifier>> spellProperties = [];
 
         #region Dependency Injection
@@ -154,6 +157,8 @@ namespace NexusForever.Game.Entity
                 if (spell.IsFinished)
                     spells.Remove(spell.CastingId);
             }
+
+            affectingSpells.RemoveAll(t => !IsAffecting(t));
 
             statUpdateManager.Update(lastTick);
 
@@ -329,6 +334,32 @@ namespace NexusForever.Game.Entity
                 if (target.GetEffectsByType(type).Any())
                     yield return spell;
             }
+        }
+
+        /// <summary>
+        /// Add the <see cref="ISpellTargetInfo"/> of a spell, from any caster, that is affecting this <see cref="IUnitEntity"/>.
+        /// </summary>
+        public void AddAffectingSpell(ISpellTargetInfo targetInfo)
+        {
+            affectingSpells.Add(targetInfo);
+        }
+
+        /// <summary>
+        /// Return the <see cref="ISpellTargetInfo"/> of every spell, from any caster, that is currently affecting this <see cref="IUnitEntity"/>.
+        /// </summary>
+        public IEnumerable<ISpellTargetInfo> GetAffectingSpells()
+        {
+            // copied, spells cast while the caller iterates can add to the list
+            return affectingSpells.Where(IsAffecting).ToList();
+        }
+
+        private bool IsAffecting(ISpellTargetInfo targetInfo)
+        {
+            // the client also drops the spells of a caster that leaves
+            ISpell spell = targetInfo.Collection.Spell;
+            return !targetInfo.IsFinalised
+                && !spell.IsFinished
+                && spell.Caster.Map == Map;
         }
 
         /// <summary>

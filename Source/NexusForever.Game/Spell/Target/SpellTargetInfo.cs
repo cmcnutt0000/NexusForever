@@ -92,6 +92,8 @@ namespace NexusForever.Game.Spell.Target
             Guid       = target.Entity.Guid;
             Flags      = target.Flags;
 
+            target.Entity.AddAffectingSpell(this);
+
             log.LogTrace($"Initialised SpellTargetInfo for target {Guid} for spell {Collection.Spell.Spell4Id}.");
         }
 
