@@ -107,9 +107,9 @@
         Unknown99                   = 99, // Requirements not met
         Unknown100                  = 100, // Requirements not met
         Unknown101                  = 101, // Requirements not met
-        SpellEffect102              = 102, // Spell effect requirements not met
-        SpellEffect103              = 103, // Spell effect requirements not met
-        SpellEffect104              = 104, // Spell effect requirements not met
+        UnderSpellEffect            = 102, // Spell effect requirements not met
+        UnderSpellEffectFromTarget  = 103, // Spell effect requirements not met
+        UnderSpellEffectGroup       = 104, // Spell effect requirements not met
         SpellEffect105              = 105, // Spell effect requirements not met
         Unknown106                  = 106, // Requirements not met
         QuestObjective7             = 107, // Quest object requirement not met

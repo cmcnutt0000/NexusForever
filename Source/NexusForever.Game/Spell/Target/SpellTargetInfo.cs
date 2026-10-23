@@ -124,6 +124,14 @@ namespace NexusForever.Game.Spell.Target
         }
 
         /// <summary>
+        /// Return every <see cref="ISpellTargetEffectInfo"/> for the target.
+        /// </summary>
+        public IEnumerable<ISpellTargetEffectInfo> GetEffects()
+        {
+            return effects.Values;
+        }
+
+        /// <summary>
         /// Create and execute the supplied <see cref="Spell4EffectsEntry"/>.
         /// </summary>
         public SpellEffectExecutionResult Execute(Spell4EffectsEntry entry, ISpellExecutionContext executionContext)

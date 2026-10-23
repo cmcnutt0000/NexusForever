@@ -33,6 +33,11 @@ namespace NexusForever.Game.Abstract.Spell.Target
         IEnumerable<ISpellTargetEffectInfo> GetEffectsByType(SpellEffectType type);
 
         /// <summary>
+        /// Return every <see cref="ISpellTargetEffectInfo"/> for the target.
+        /// </summary>
+        IEnumerable<ISpellTargetEffectInfo> GetEffects();
+
+        /// <summary>
         /// Create and execute the supplied <see cref="Spell4EffectsEntry"/>.
         /// </summary>
         public SpellEffectExecutionResult Execute(Spell4EffectsEntry entry, ISpellExecutionContext executionContext);
