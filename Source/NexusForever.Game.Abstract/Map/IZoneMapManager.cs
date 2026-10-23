@@ -10,6 +10,11 @@ namespace NexusForever.Game.Abstract.Map
         void SendZoneMaps();
 
         /// <summary>
+        /// Return the <see cref="IZoneMap"/> for the supplied map zone id, null if nothing in it has been discovered.
+        /// </summary>
+        IZoneMap GetZoneMap(ushort mapZoneId);
+
+        /// <summary>
         /// Invoked when <see cref="IPlayer"/> moves to a new <see cref="Vector3"/>.
         /// </summary>
         void OnRelocate(Vector3 vector);

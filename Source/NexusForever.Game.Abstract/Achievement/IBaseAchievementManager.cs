@@ -20,6 +20,11 @@ namespace NexusForever.Game.Abstract.Achievement
         bool HasCompletedAchievement(ushort id);
 
         /// <summary>
+        /// Return the <see cref="IAchievement"/> with the supplied id, null if there is no progress for it.
+        /// </summary>
+        IAchievement GetAchievementProgress(ushort id);
+
+        /// <summary>
         /// Send initial <see cref="IAchievement{T}"/> information to owner on login.
         /// </summary>
         void SendInitialPackets(IPlayer target);

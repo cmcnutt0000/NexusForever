@@ -56,6 +56,14 @@ namespace NexusForever.Game.Account.Currency
         /// <summary>
         /// Returns whether the Account has enough of the currency to afford the amount.
         /// </summary>
+        /// <summary>
+        /// Returns the amount of the currency the Account has.
+        /// </summary>
+        public ulong GetAmount(AccountCurrencyType currencyType)
+        {
+            return currencies.TryGetValue(currencyType, out IAccountCurrency currency) ? currency.Amount : 0ul;
+        }
+
         public bool CanAfford(AccountCurrencyType currencyType, ulong amount)
         {
             if (!currencies.TryGetValue(currencyType, out IAccountCurrency accountCurrency))

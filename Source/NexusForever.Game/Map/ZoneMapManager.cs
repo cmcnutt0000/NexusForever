@@ -55,6 +55,14 @@ namespace NexusForever.Game.Map
             SendZoneMaps();
         }
 
+        /// <summary>
+        /// Return the <see cref="IZoneMap"/> for the supplied map zone id, null if nothing in it has been discovered.
+        /// </summary>
+        public IZoneMap GetZoneMap(ushort mapZoneId)
+        {
+            return zoneMaps.TryGetValue(mapZoneId, out IZoneMap zoneMap) ? zoneMap : null;
+        }
+
         public void SendZoneMaps()
         {
             foreach (IZoneMap zoneMap in zoneMaps.Values)

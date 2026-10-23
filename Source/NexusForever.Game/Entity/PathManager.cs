@@ -100,6 +100,18 @@ namespace NexusForever.Game.Entity
         /// <summary>
         /// Checks to see if a <see cref="IPlayer"/>'s <see cref="Path"/> is mathced by a corresponding <see cref="PathUnlockedMask"/> flag.
         /// </summary>
+        /// <summary>
+        /// Returns the level of the supplied <see cref="Path"/>, 0 if there is no entry for it.
+        /// </summary>
+        public uint GetLevel(Path path)
+        {
+            if (!paths.TryGetValue(path, out IPathEntry entry))
+                return 0u;
+
+            return GameTableManager.Instance.PathLevel.Entries
+                .LastOrDefault(x => x.PathXP <= entry.TotalXp && x.PathTypeEnum == (uint)path)?.PathLevel ?? 0u;
+        }
+
         public bool IsPathUnlocked(Path pathToUnlock)
         {
             return GetPathEntry(pathToUnlock).Unlocked;

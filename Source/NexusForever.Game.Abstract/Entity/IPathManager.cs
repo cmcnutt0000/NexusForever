@@ -21,6 +21,11 @@ namespace NexusForever.Game.Abstract.Entity
         bool IsPathUnlocked(Static.Entity.Path pathToUnlock);
 
         /// <summary>
+        /// Returns the level of the supplied <see cref="Static.Entity.Path"/>, 0 if there is no entry for it.
+        /// </summary>
+        uint GetLevel(Static.Entity.Path path);
+
+        /// <summary>
         /// Attemps to unlock supplied <see cref="Static.Entity.Path"/>.
         /// </summary>
         void UnlockPath(Static.Entity.Path pathToUnlock);

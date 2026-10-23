@@ -112,7 +112,7 @@
         UnderSpellEffectGroup       = 104, // Spell effect requirements not met
         UnderSpellEffectType        = 105, // Spell effect requirements not met
         TargetInGroup               = 106, // Requirements not met
-        QuestObjective7             = 107, // Quest object requirement not met
+        PathMissionTarget           = 107, // Quest object requirement not met
         /// <summary>
         /// Checks to see if a PositionalRequirement Entry is met.
         /// </summary>
@@ -163,7 +163,7 @@
         HubSecurity                 = 152, // Hub security progress requirement not met
         HoldoutWave                 = 153, // The specified holdout wave requirement not met
         Holdout                     = 154, // Soldier holdout requirement not met
-        PathMission155              = 155, // Path mission requirement not met
+        PathMissionState            = 155, // Path mission requirement not met
         // 156 is unused in PrerequisiteType.tbl
         // 157 is unused in PrerequisiteType.tbl
         // 158 is unused in PrerequisiteType.tbl
@@ -179,7 +179,7 @@
         LiveEventCount              = 168, // Live event count requirement not correct
         LiveEvent169                = 169, // Live event requirement not met
         ActiveClientSideInteraction = 170, // Requirements not met
-        Unknown171                  = 171, // Requirements not met
+        PathUnit                    = 171, // Requirements not met
         Unknown172                  = 172, // Requirements not met
         ItemTradeSkill              = 173, // Item tradeskill requirement not met
         Item6                       = 174, // Item requirement not met
@@ -228,20 +228,20 @@
         PvpFlag                     = 217, // Target is not flagged for PvP.
         Datacube                    = 218, // Datacube requirement not met
         Volume                      = 219, // Volume requirement not met
-        Unknown220                  = 220, // Exist in PrerequisiteType.tbl but does not have a description
+        PathMissionSubCheck         = 220, // Exist in PrerequisiteType.tbl but does not have a description
         ActionSetSpell              = 221, // Spell requirement not met
         Unknown222                  = 222, // Requirements not met
-        Unknown223                  = 223, // Requirements not met
+        AchievementChecklistUnit    = 223, // Requirements not met
         LevelGrantAbilityTierPoints = 224, // Level does not grant any ability tier points
         LevelGrantAmpPoints         = 225, // Level does not grant any AMP points
         Entitlement                 = 226, // Entitlement requirement not met
-        EldanAugmentation227        = 227, // Eldan augmentation requirement not met
+        AmpUnlocked                 = 227, // Eldan augmentation requirement not met
         TradeSkill228               = 228, // Tradeskill requirement not met
         TradeSkill229               = 229, // Tradeskill requirement not met
         WarplotRating               = 230, // Warplot rating requirement not met
-        EldanAugmentation231        = 231, // Eldan augmentation requirement not met
+        AmpEquipped                 = 231, // Eldan augmentation requirement not met
         Plane                       = 232, // Plane requirement not met
-        Spell233                    = 233, // Spell requirement not met
+        SpellTierKnown              = 233, // Spell requirement not met
         WarplotUpgrade              = 234, // Warplot upgrade requirement not met
         BonusAbilityTierPoints      = 235, // Bonus ability tier point requirement not met
         AbilityTierPoints           = 236, // Ability tier points requirement not met
@@ -253,7 +253,7 @@
         LiveEvent242                = 242, // Live event not complete
         Faction243                  = 243, // Faction requirement not met
         HasBindPoint                = 244, // Exist in PrerequisiteType.tbl but does not have a description
-        Unknown245                  = 245, // Exist in PrerequisiteType.tbl but does not have a description
+        DyeUnlocked                 = 245, // Exist in PrerequisiteType.tbl but does not have a description
         Inventory                   = 246, // Inventory requirement not met
         // 247 is unused in PrerequisiteType.tbl
         Unknown248                  = 248, // Exist in PrerequisiteType.tbl but does not have a description
@@ -283,7 +283,7 @@
         Unknown272                  = 272, // Exist in PrerequisiteType.tbl but does not have a description
         EntitlementCount            = 273, // Entitlement count requirement not met
         // 274 is unused in PrerequisiteType.tbl
-        Unknown275                  = 275, // Exist in PrerequisiteType.tbl but does not have a description
+        CostumeItemUnlocked         = 275, // Exist in PrerequisiteType.tbl but does not have a description
         OutOfBounds                 = 276, // You're out of bounds
         Unknown277                  = 277, // You cannot do that right now
         Unknown278                  = 278, // Requirements not met
@@ -301,7 +301,7 @@
         Unknown290                  = 290, // Exist in PrerequisiteType.tbl but does not have a description
         Unknown291                  = 291, // Exist in PrerequisiteType.tbl but does not have a description
         PrimalMatrixNode            = 292, // Exist in PrerequisiteType.tbl but does not have a description - Primal Matrix ?
-        Unknown293                  = 293, // Exist in PrerequisiteType.tbl but does not have a description
+        AccountCurrency             = 293, // Exist in PrerequisiteType.tbl but does not have a description
         Unknown294                  = 294, // Exist in PrerequisiteType.tbl but does not have a description
         Unknown295                  = 295  // Requirements not met           
     }

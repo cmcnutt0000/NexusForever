@@ -13,6 +13,16 @@ namespace NexusForever.Game.Abstract.Map
         bool IsComplete { get; }
 
         /// <summary>
+        /// Returns the number of discovered hexes in the <see cref="MapZoneEntry"/>.
+        /// </summary>
+        uint ExploredHexCount { get; }
+
+        /// <summary>
+        /// Returns the number of hexes in the <see cref="MapZoneEntry"/>.
+        /// </summary>
+        uint MaxHexCount { get; }
+
+        /// <summary>
         /// Send <see cref="ServerZoneMap"/> to <see cref="IPlayer"/>.
         /// </summary>
         void Send();

@@ -15,6 +15,8 @@ namespace NexusForever.Game.Map
         /// Returns if all <see cref="MapZoneHexGroupEntry"/> in the <see cref="MapZoneEntry"/> have been discovered.
         /// </summary>
         public bool IsComplete => maxHexGroups == zoneMapHexGroups.Count;
+        public uint ExploredHexCount => (uint)GetCurrentHexCount();
+        public uint MaxHexCount => maxHexCount;
 
         private readonly MapZoneEntry entry;
         

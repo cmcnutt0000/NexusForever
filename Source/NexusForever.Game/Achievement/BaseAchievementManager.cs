@@ -52,6 +52,14 @@ namespace NexusForever.Game.Achievement
         /// <summary>
         /// Returns if the supplied achievement id has been completed.
         /// </summary>
+        /// <summary>
+        /// Return the <see cref="IAchievement"/> with the supplied id, null if there is no progress for it.
+        /// </summary>
+        public IAchievement GetAchievementProgress(ushort id)
+        {
+            return achievements.TryGetValue(id, out IAchievement achievement) ? achievement : null;
+        }
+
         public bool HasCompletedAchievement(ushort id)
         {
             return achievements.TryGetValue(id, out IAchievement achievement) && achievement.IsComplete();

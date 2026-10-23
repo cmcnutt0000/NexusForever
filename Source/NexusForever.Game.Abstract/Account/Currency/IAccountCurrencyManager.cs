@@ -11,6 +11,11 @@ namespace NexusForever.Game.Abstract.Account.Currency
         bool CanAfford(AccountCurrencyType currencyType, ulong amount);
 
         /// <summary>
+        /// Returns the amount of the currency the Account has.
+        /// </summary>
+        ulong GetAmount(AccountCurrencyType currencyType);
+
+        /// <summary>
         /// Add a supplied amount to an <see cref="IAccountCurrency"/>.
         /// </summary>
         void CurrencyAddAmount(AccountCurrencyType currencyType, ulong amount, ulong reason = 0);
