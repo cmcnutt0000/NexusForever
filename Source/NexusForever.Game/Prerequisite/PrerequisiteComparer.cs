@@ -37,5 +37,25 @@ namespace NexusForever.Game.Prerequisite
                     return false;
             }
         }
+
+        /// <summary>
+        /// Evaluate a has/hasn't condition, <see cref="PrerequisiteComparison.Equal"/> passes when it holds and <see cref="PrerequisiteComparison.NotEqual"/> when it doesn't.
+        /// </summary>
+        /// <returns>False if the <see cref="PrerequisiteComparison"/> is neither, the client fails those.</returns>
+        public static bool TryEvaluate(PrerequisiteComparison comparison, bool condition, out bool result)
+        {
+            switch (comparison)
+            {
+                case PrerequisiteComparison.Equal:
+                    result = condition;
+                    return true;
+                case PrerequisiteComparison.NotEqual:
+                    result = !condition;
+                    return true;
+                default:
+                    result = false;
+                    return false;
+            }
+        }
     }
 }

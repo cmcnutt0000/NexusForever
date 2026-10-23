@@ -26,17 +26,17 @@ namespace NexusForever.Game.Prerequisite.Check
             switch (comparison)
             {
                 case PrerequisiteComparison.Equal:
-                    return subject.GetVitalValue((Vital)objectId) == value;
+                    return subject.GetVital((Vital)objectId) == value;
                 case PrerequisiteComparison.NotEqual:
-                    return subject.GetVitalValue((Vital)objectId) != value;
+                    return subject.GetVital((Vital)objectId) != value;
                 case PrerequisiteComparison.GreaterThanOrEqual:
-                    return subject.GetVitalValue((Vital)objectId) >= value;
+                    return subject.GetVital((Vital)objectId) >= value;
                 case PrerequisiteComparison.GreaterThan:
-                    return subject.GetVitalValue((Vital)objectId) > value;
+                    return subject.GetVital((Vital)objectId) > value;
                 case PrerequisiteComparison.LessThanOrEqual:
-                    return subject.GetVitalValue((Vital)objectId) <= value;
+                    return subject.GetVital((Vital)objectId) <= value;
                 case PrerequisiteComparison.LessThan:
-                    return subject.GetVitalValue((Vital)objectId) < value;
+                    return subject.GetVital((Vital)objectId) < value;
                 default:
                     log.LogWarning($"Unhandled {comparison} for {PrerequisiteType.Vital}!");
                     return false;

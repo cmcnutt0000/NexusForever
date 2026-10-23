@@ -60,7 +60,7 @@
         Path                        = 52, // You do not meet the player path requirement
         PathEpisode                 = 53, // You do not meet the player path episode requirement
         PlayerPathMission           = 54, // You do not meet the player path mission requirement
-        Unknown55                   = 55, // Requirements not met
+        UnitProperty                = 55, // Requirements not met
         CCState                     = 56, // Requirements not met - unit has the CCState in value
         // 57 is unused in PrerequisiteType.tbl
         // 58 is unused in PrerequisiteType.tbl
@@ -68,15 +68,15 @@
         SpellStackCountFromTarget   = 60, // Spell requirements not met
         PathMissionCount            = 61, // Path mission count is incorrect 
         ScanCreature                = 62, // Unable to scan this creature - Probably HasScannedCreature
-        Unknown63                   = 63, // Requirements not met
-        Unknown64                   = 64, // Requirements not met
+        IsLocalPlayer               = 63, // Requirements not met
+        Resource                    = 64, // Requirements not met
         Deprecated65                = 65, // Marked as DEPRECATED
         Deprecated66                = 66, // Marked as DEPRECATED
         PathMissionRequirement      = 67, // You do not meet the path mission requirement
         QuestObjective              = 68, // Quest objective requirement not met
         ChallengeRequirement        = 69, // Challenge requirement not met
         ChallengeTier               = 70, // Challenge tier requirement not met
-        Unknown71                   = 71, // Requirements not met
+        VitalPercent                = 71, // Requirements not met
         // 72 is unused in PrerequisiteType.tbl
         Vital                       = 73, // Requirements not met - Part of Vital
         ChallengeLocked             = 74, // The specified challenge is locked
@@ -95,10 +95,10 @@
         Moving                      = 87, // Moving requirement not met
         Pet                         = 88, // Pet requirements not met
         Unknown89                   = 89, // Requirements not met
-        Unknown90                   = 90, // Requirements not met
+        IsAttached                  = 90, // Requirements not met
         PathLevel                   = 91, // Incorrect path level
         SpellCondition92            = 92, // Spell conditions not met
-        SpellCondition93            = 93, // Spell conditions not met
+        UnderSpellClass             = 93, // Spell conditions not met
         QuestObjective6             = 94, // Quest objective requirements not met
         Distance                    = 95, // Distance requirements not met
         Unknown96                   = 96, // Requirements not met
@@ -110,8 +110,8 @@
         UnderSpellEffect            = 102, // Spell effect requirements not met
         UnderSpellEffectFromTarget  = 103, // Spell effect requirements not met
         UnderSpellEffectGroup       = 104, // Spell effect requirements not met
-        SpellEffect105              = 105, // Spell effect requirements not met
-        Unknown106                  = 106, // Requirements not met
+        UnderSpellEffectType        = 105, // Spell effect requirements not met
+        TargetInGroup               = 106, // Requirements not met
         QuestObjective7             = 107, // Quest object requirement not met
         /// <summary>
         /// Checks to see if a PositionalRequirement Entry is met.
@@ -122,8 +122,8 @@
         HazardProperty111           = 111, // Hazard property requirement not met
         HazardProperty112           = 112, // Hazard property requirement not met
         HazardProperty113           = 113, // Hazard property requirement not met
-        Vital114                    = 114, // Vital requirement not met
-        Unit                        = 115, // Unit requirement not met
+        VitalCompare                = 114, // Vital requirement not met
+        UnitPropertyCompare         = 115, // Unit requirement not met
         Stealth                     = 116, // Stealth property requirement not met
         PublicEvent117              = 117, // Public event requirement not met
         PublicEventObjectiveStatus  = 118, // Public event objective requirement not met
@@ -167,7 +167,7 @@
         // 156 is unused in PrerequisiteType.tbl
         // 157 is unused in PrerequisiteType.tbl
         // 158 is unused in PrerequisiteType.tbl
-        Unknown159                  = 159, // Requirements not met
+        PositionalRequirementTarget = 159, // Requirements not met
         Challenge160                = 160, // Challenge requirement not met
         // 161 is unused in PrerequisiteType.tbl
         PublicEventObjective2       = 162, // Public event objective requirement not met
@@ -178,7 +178,7 @@
         LiveEvent167                = 167, // Live event requirement not met
         LiveEventCount              = 168, // Live event count requirement not correct
         LiveEvent169                = 169, // Live event requirement not met
-        Unknown170                  = 170, // Requirements not met
+        ActiveClientSideInteraction = 170, // Requirements not met
         Unknown171                  = 171, // Requirements not met
         Unknown172                  = 172, // Requirements not met
         ItemTradeSkill              = 173, // Item tradeskill requirement not met
@@ -199,7 +199,7 @@
         WarplotPermission           = 188, // Warplot permission requirement not met
         Unknown189                  = 189, // Exist in PrerequisiteType.tbl but does not have a description
         PetFlair                    = 190, // Pet flair requirement not met
-        Spell191                    = 191, // Spell requirement not met
+        IsCasting                   = 191, // Spell requirement not met
         Unknown192                  = 192, // Exist in PrerequisiteType.tbl but does not have a description
         Unknown193                  = 193, // Requirement not met
         MountUsage                  = 194, // Ground mounts cannot be used in this area
@@ -248,11 +248,11 @@
         BonusPower                  = 237, // Bonus power requirement not met
         Power                       = 238, // Power requirement not met
         ActionBar                   = 239, // Action bar does not meet requirements 
-        Unknown240                  = 240, // Exist in PrerequisiteType.tbl but does not have a description
-        Unknown241                  = 241, // Exist in PrerequisiteType.tbl but does not have a description
+        RallyState                  = 240, // Exist in PrerequisiteType.tbl but does not have a description
+        HasResidence                = 241, // Exist in PrerequisiteType.tbl but does not have a description
         LiveEvent242                = 242, // Live event not complete
         Faction243                  = 243, // Faction requirement not met
-        Unknown244                  = 244, // Exist in PrerequisiteType.tbl but does not have a description
+        HasBindPoint                = 244, // Exist in PrerequisiteType.tbl but does not have a description
         Unknown245                  = 245, // Exist in PrerequisiteType.tbl but does not have a description
         Inventory                   = 246, // Inventory requirement not met
         // 247 is unused in PrerequisiteType.tbl
@@ -275,7 +275,7 @@
         Battlegrounds264            = 264, // Battlegrounds requirement not met
         Warplots265                 = 265, // Warplots requirement not met
         IsPet                       = 266, // Exist in PrerequisiteType.tbl but does not have a description - unit is a Pet or EsperPet
-        Unknown267                  = 267, // Exist in PrerequisiteType.tbl but does not have a description
+        InRaid                      = 267, // Exist in PrerequisiteType.tbl but does not have a description
         Unknown268                  = 268, // Exist in PrerequisiteType.tbl but does not have a description
         HealthyGamingState          = 269, // Exist in PrerequisiteType.tbl but does not have a description - client compares the Healthy Gaming state with objectId
         LoyaltyRewards              = 270, // Loyalty requirement not met
@@ -300,7 +300,7 @@
         Unknown289                  = 289, // Exist in PrerequisiteType.tbl but does not have a description
         Unknown290                  = 290, // Exist in PrerequisiteType.tbl but does not have a description
         Unknown291                  = 291, // Exist in PrerequisiteType.tbl but does not have a description
-        Unknown292                  = 292, // Exist in PrerequisiteType.tbl but does not have a description - Primal Matrix ?
+        PrimalMatrixNode            = 292, // Exist in PrerequisiteType.tbl but does not have a description - Primal Matrix ?
         Unknown293                  = 293, // Exist in PrerequisiteType.tbl but does not have a description
         Unknown294                  = 294, // Exist in PrerequisiteType.tbl but does not have a description
         Unknown295                  = 295  // Requirements not met           

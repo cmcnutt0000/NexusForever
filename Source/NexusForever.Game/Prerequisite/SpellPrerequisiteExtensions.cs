@@ -16,6 +16,14 @@ namespace NexusForever.Game.Prerequisite
         }
 
         /// <summary>
+        /// Return whether a spell matching the supplied predicate is affecting the unit, if a caster is supplied only its spells count.
+        /// </summary>
+        public static bool IsAffectedBySpell(this IUnitEntity unit, Func<ISpell, bool> predicate, IUnitEntity caster = null)
+        {
+            return GetSpellsAffecting(unit, caster).Any(predicate);
+        }
+
+        /// <summary>
         /// Return whether a spell in the supplied spell group is affecting the unit, if a caster is supplied only its spells count.
         /// </summary>
         public static bool IsAffectedBySpellGroup(this IUnitEntity unit, uint spellGroupId, IUnitEntity caster = null)
