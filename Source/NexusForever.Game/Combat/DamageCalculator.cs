@@ -103,6 +103,48 @@ namespace NexusForever.Game.Combat
         }
 
         /// <summary>
+        /// Calculates the heal and updates the referenced <see cref="ISpellTargetEffectInfo"/> appropriately.
+        /// </summary>
+        /// <remarks>
+        /// The base amount is the client's effect magnitude (0x140565600), the same as damage.
+        /// TODO: variance, crits and the healing multipliers aren't in the client, they follow the damage path and the property names.
+        /// </remarks>
+        public void CalculateHeal(ISpellExecutionContext executionContext, IUnitEntity target, ISpellTargetEffectInfo info, DamageType damageType)
+        {
+            IUnitEntity caster = executionContext.Spell.Caster;
+
+            damageDescription.DamageType   = damageType;
+            damageDescription.CombatResult = CombatResult.Hit;
+
+            uint heal = CalculateBaseDamage(caster, target, info.Entry);
+            damageDescription.RawDamage       = heal;
+            damageDescription.RawScaledDamage = heal;
+
+            heal = CalculateBaseDamageVariance(heal);
+
+            if (CalculateCrit(ref heal, caster, target))
+                damageDescription.CombatResult = CombatResult.Critical;
+
+            if (damageType == DamageType.Heal)
+            {
+                float multiplier = (caster.GetProperty(Property.HealingMultiplierOutgoing)?.Value ?? 1f)
+                    * (target.GetProperty(Property.HealingMultiplierIncoming)?.Value ?? 1f);
+                heal = (uint)MathF.Round(heal * MathF.Max(0f, multiplier));
+
+                uint missing = target.MaxHealth - Math.Min(target.Health, target.MaxHealth);
+                damageDescription.OverkillAmount = heal > missing ? heal - missing : 0u;
+            }
+            else
+            {
+                uint missing = target.MaxShieldCapacity - Math.Min(target.Shield, target.MaxShieldCapacity);
+                damageDescription.OverkillAmount = heal > missing ? heal - missing : 0u;
+            }
+
+            damageDescription.AdjustedDamage = heal;
+            info.AddDamage(damageDescription);
+        }
+
+        /// <summary>
         /// Get base damage value for the given <see cref="IUnitEntity"/> with the provided parameter data from the <see cref="Spell4EffectsEntry"/>.
         /// </summary>
         private uint CalculateBaseDamage(IUnitEntity caster, IUnitEntity target, Spell4EffectsEntry entry)

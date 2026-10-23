@@ -23,20 +23,21 @@ namespace NexusForever.Game.Entity
         /// Calculates the modifier type and value.
         /// </summary>
         /// <remarks>
-        /// Based on digging through a lot of spell effects, it appears that each dataBits was a specific adjustment. It does not appear as though a Percentage and FlatValue applied at the same time. BUt, a Level Scaling would apply alongside either.
+        /// Derived from the Spell4Effects data and tooltips, the client doesn't calculate unit properties itself:
+        /// Value2 multiplies the property and a value of 0 is used to zero it (move speed during pulls and leaps, falling damage) or, with Value3, to set it (interrupt armour -1 for Unstoppable Force).
+        /// Value3 is added when Value2 is 1 or 0. The 131 effects with both set otherwise are ignoring Value3, it is mostly a placeholder of 1 there and tooltips such as Zeal's describe only the percentage.
+        /// Value4 is a further value per level, used by very few spells.
         /// </remarks>
         private void CalculateModAndValue(float value2, float value3, float value4)
         {
-            // Value4 is used by very few spells to adjust property value further based on level. Most are deprecated, too.
+            if (value2 != 1f)
+                Alterations.Add(new PropertyModifier(Property, ModType.Percentage, value2));
+
+            if (value3 != 0f && (value2 == 1f || value2 == 0f))
+                Alterations.Add(new PropertyModifier(Property, ModType.FlatValue, value3));
+
             if (value4 != 0f)
                 Alterations.Add(new PropertyModifier(Property, ModType.LevelScale, value4));
-
-            // Value3 is a flat value
-            if (value3 != 0f)
-                Alterations.Add(new PropertyModifier(Property, ModType.FlatValue, value3));
-            // Value2 is a Percentage
-            else if (value2 != 0f)
-                Alterations.Add(new PropertyModifier(Property, ModType.Percentage, value2));
         }
     }
 }

@@ -256,7 +256,6 @@ namespace NexusForever.Game.Entity
             {
                 foreach (IPropertyModifier alteration in spellModifier.Alterations)
                 {
-                    // TODO: Add checks to ensure we're not modifying FlatValue and Percentage in the same effect?
                     switch (alteration.ModType)
                     {
                         case ModType.FlatValue:

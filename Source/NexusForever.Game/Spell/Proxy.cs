@@ -64,7 +64,7 @@ namespace NexusForever.Game.Spell
                 double tickTime = Data.Entry.TickTime;
                 if (Data.Entry.DurationTime > 0)
                 {
-                    for (int i = 1; i >= Data.Entry.DurationTime / tickTime; i++)
+                    for (int i = 1; i <= Data.Entry.DurationTime / tickTime; i++)
                     {
                         events.EnqueueEvent(new SpellEvent(tickTime * i / 1000d, () =>
                         {
