@@ -259,9 +259,10 @@ namespace NexusForever.Game.Combat
                     case SpellEffectParameterType.TargetMaxShieldCapacity:
                         intermediateValue = target.MaxShieldCapacity;
                         break;
-                    // TODO: the client uses the item budget for the caster's item level here (0x14041F1B0, GameFormula 65, 253 and 991)
+                    // client uses the caster's level for spell tooltips and the item's level for item tooltips, see 0x1404DE8D0 in the client
+                    // TODO: use the item's level for spells cast by an item
                     case SpellEffectParameterType.ItemBudget:
-                        intermediateValue = entry.ParameterValue[i];
+                        intermediateValue = GetItemBudget(caster.Level);
                         break;
                     case SpellEffectParameterType.TargetCurrentHealth:
                         intermediateValue = target.Health;
@@ -290,6 +291,30 @@ namespace NexusForever.Game.Combat
             }
 
             return value;
+        }
+
+        /// <summary>
+        /// Return the item budget for the supplied item level.
+        /// </summary>
+        /// <remarks>
+        /// See 0x14041F1B0 in the client, each <see cref="GameFormulaEntry"/> is a curve of Datafloat0 * e^(Datafloat01 * x) + Datafloat02 * x^Datafloat03 where x is the level above Dataint0.
+        /// Levels below Dataint0 of entry 65 use entry 991, levels below Dataint0 of entry 253 use entry 65 and all others use entry 253.
+        /// </remarks>
+        private float GetItemBudget(uint itemLevel)
+        {
+            GameFormulaEntry formulaEntry;
+            if (itemLevel < (gameTableManager.GameFormula.GetEntry(65)?.Dataint0 ?? 0u))
+                formulaEntry = gameTableManager.GameFormula.GetEntry(991);
+            else if (itemLevel < (gameTableManager.GameFormula.GetEntry(253)?.Dataint0 ?? 0u))
+                formulaEntry = gameTableManager.GameFormula.GetEntry(65);
+            else
+                formulaEntry = gameTableManager.GameFormula.GetEntry(253);
+
+            if (formulaEntry == null)
+                return 0f;
+
+            float x = itemLevel - formulaEntry.Dataint0;
+            return formulaEntry.Datafloat0 * MathF.Pow(MathF.E, formulaEntry.Datafloat01 * x) + formulaEntry.Datafloat02 * MathF.Pow(x, formulaEntry.Datafloat03);
         }
 
         private uint CalculateBaseDamageVariance(uint damage)
