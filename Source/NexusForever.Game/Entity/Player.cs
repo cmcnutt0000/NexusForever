@@ -321,6 +321,8 @@ namespace NexusForever.Game.Entity
             Name              = model.Name;
             sex               = (Sex)model.Sex;
             race              = (Race)model.Race;
+            // the client pads telegraphs by the player's Race.hitRadius, see 0x14054DA10
+            HitRadius         = GameTableManager.Instance.Race.GetEntry((ulong)race)?.HitRadius ?? HitRadius;
             Class             = (Class)model.Class;
             path              = (Path)model.ActivePath;
             PathActivatedTime = model.PathActivatedTimestamp;
