@@ -324,21 +324,32 @@ namespace NexusForever.Game.Combat
 
         private uint GetDamageAfterArmorMitigation(IUnitEntity victim, DamageType damageType, uint damage)
         {
-            GameFormulaEntry armorFormulaEntry = gameTableManager.GameFormula.GetEntry(1234);
-            float maximumArmorMitigation = (float)(armorFormulaEntry.Dataint01 * 0.01);
-            float mitigationPct = (armorFormulaEntry.Datafloat0 / victim.Level * armorFormulaEntry.Datafloat01) * victim.GetPropertyValue(Property.Armor) / 100;
+            // armor plus the damage type's resist is the rating and the two mitigation offsets the base, see 0x140464240 in the client
+            Property resist;
+            Property offset;
+            switch (damageType)
+            {
+                case DamageType.Physical:
+                    resist = Property.ResistPhysical;
+                    offset = Property.DamageMitigationPctOffsetPhysical;
+                    break;
+                case DamageType.Tech:
+                    resist = Property.ResistTech;
+                    offset = Property.DamageMitigationPctOffsetTech;
+                    break;
+                case DamageType.Magic:
+                    resist = Property.ResistMagic;
+                    offset = Property.DamageMitigationPctOffsetMagic;
+                    break;
+                default:
+                    return damage;
+            }
 
-            if (damageType == DamageType.Physical)
-                mitigationPct += victim.GetPropertyValue(Property.DamageMitigationPctOffsetPhysical);
-            else if (damageType == DamageType.Tech)
-                mitigationPct += victim.GetPropertyValue(Property.DamageMitigationPctOffsetTech);
-            else if (damageType == DamageType.Magic)
-                mitigationPct += victim.GetPropertyValue(Property.DamageMitigationPctOffsetMagic);
+            float rating = victim.GetPropertyValue(Property.Armor) + victim.GetPropertyValue(resist);
+            float baseValue = victim.GetPropertyValue(Property.DamageMitigationPctOffset) + victim.GetPropertyValue(offset);
+            float mitigation = MathF.Max(0f, GetRatingValue(victim, 1234u, rating, baseValue));
 
-            if (mitigationPct > 0f)
-                damage = (uint)Math.Round(damage * (1f - Math.Clamp(mitigationPct, 0f, maximumArmorMitigation)));
-
-            return damage;
+            return (uint)MathF.Round(damage * (1f - mitigation));
         }
 
         private bool IsSuccessfulChance(float percentage)
@@ -403,173 +414,67 @@ namespace NexusForever.Game.Combat
             return glance;
         }
 
+        // base property and GameFormula of each rating, see the Lua Unit:Get*Chance functions (0x140460670 to 0x140465C40) in the client
+        private static readonly Dictionary<Property, (Property Base, uint FormulaId)> ratings = new()
+        {
+            { Property.RatingCritChanceIncrease,   (Property.BaseCritChance,                1231u) },
+            { Property.RatingCritSeverityIncrease, (Property.CriticalHitSeverityMultiplier, 1232u) },
+            { Property.RatingAvoidReduce,          (Property.BaseAvoidReduceChance,         1230u) },
+            { Property.RatingLifesteal,            (Property.BaseLifesteal,                 1233u) },
+            { Property.RatingAvoidIncrease,        (Property.BaseAvoidChance,               1235u) },
+            { Property.RatingCritChanceDecrease,   (Property.BaseAvoidCritChance,           1236u) },
+            { Property.RatingMultiHitChance,       (Property.BaseMultiHitChance,            1240u) },
+            { Property.RatingDamageReflectChance,  (Property.BaseDamageReflectChance,       1241u) },
+            { Property.RatingCriticalMitigation,   (Property.BaseCriticalMitigation,        1242u) },
+            { Property.RatingIntensity,            (Property.BaseIntensity,                 1243u) },
+            { Property.RatingVigor,                (Property.BaseVigor,                     1244u) },
+            { Property.RatingGlanceChance,         (Property.BaseGlanceChance,              1245u) },
+            { Property.RatingArmorPierce,          (Property.IgnoreArmorBase,               1269u) },
+            { Property.RatingMultiHitAmount,       (Property.BaseMultiHitAmount,            1270u) },
+            { Property.RatingGlanceAmount,         (Property.BaseGlanceAmount,              1271u) },
+            { Property.RatingDamageReflectAmount,  (Property.BaseDamageReflectAmount,       1272u) },
+        };
+
+        /// <summary>
+        /// Return the value of the supplied rating <see cref="Property"/> for the <see cref="IUnitEntity"/>, its base property included.
+        /// </summary>
         private float GetRatingPercentMod(Property property, IUnitEntity entity)
         {
-            GameFormulaEntry gameFormula = null;
-
-            switch (property)
+            if (!ratings.TryGetValue(property, out (Property Base, uint FormulaId) rating))
             {
-                case Property.Armor:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1234);
-                    break;
-                case Property.RatingArmorPierce:
-                case Property.IgnoreArmorBase:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1269);
-                    break;
-                case Property.RatingAvoidReduce: // Strikethrough
-                case Property.BaseAvoidReduceChance:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1230);
-                    break;
-                case Property.RatingAvoidIncrease: // Deflect
-                case Property.BaseAvoidChance:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1235);
-                    break;
-                case Property.RatingCriticalMitigation:
-                case Property.BaseCriticalMitigation:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1236);
-                    break;
-                case Property.RatingCritChanceDecrease: // Deflect Crit Chance
-                case Property.BaseAvoidCritChance:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1236);
-                    break;
-                case Property.RatingCritChanceIncrease:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1231);
-                    break;
-                case Property.RatingCritSeverityIncrease:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1232);
-                    break;
-                case Property.CCDurationModifier:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1274);
-                    break;
-                case Property.RatingDamageReflectAmount:
-                case Property.BaseDamageReflectAmount:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1272);
-                    break;
-                case Property.RatingDamageReflectChance:
-                case Property.BaseDamageReflectChance:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1241);
-                    break;
-                case Property.RatingFocusRecovery:
-                case Property.BaseFocusRecoveryInCombat:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1237);
-                    break;
-                case Property.RatingGlanceAmount:
-                case Property.BaseGlanceAmount:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1271);
-                    break;
-                case Property.RatingGlanceChance:
-                case Property.BaseGlanceChance:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1245);
-                    break;
-                case Property.RatingIntensity:
-                case Property.BaseIntensity:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1243);
-                    break;
-                case Property.RatingLifesteal:
-                case Property.BaseLifesteal:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1233);
-                    break;
-                case Property.RatingMultiHitAmount:
-                case Property.BaseMultiHitAmount:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1270);
-                    break;
-                case Property.RatingMultiHitChance:
-                case Property.BaseMultiHitChance:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1240);
-                    break;
-                case Property.RatingVigor:
-                case Property.BaseVigor:
-                    gameFormula = gameTableManager.GameFormula.GetEntry(1244);
-                    break;
-                default:
-                    log.LogWarning($"Unhandled Property in calculating Percentage from Rating: {property}");
-                    break;
+                log.LogWarning($"Unhandled Property in calculating Percentage from Rating: {property}");
+                return 0f;
             }
 
-            // Return a decimal representing the % applied by this rating.
-            float ratingMod = ((gameFormula.Datafloat0 / entity.Level) * gameFormula.Datafloat01) * entity.GetPropertyValue(property);
-            return Math.Min((GetBasePercentMod(property, entity) + ratingMod) * 100f, gameFormula.Dataint01) / 100f;
+            return GetRatingValue(entity, rating.FormulaId, entity.GetPropertyValue(property), entity.GetPropertyValue(rating.Base));
         }
 
-        private float GetBasePercentMod(Property property, IUnitEntity entity)
+        /// <summary>
+        /// Return the value of a rating, see 0x140453B60 in the client.
+        /// </summary>
+        /// <remarks>
+        /// Each point of rating is worth Datafloat0 / level * Datafloat01 percent on top of Dataint0 until the percentage reaches Datafloat02.
+        /// Rating past that is scaled by cos(excess / (excess + Datafloat03) * pi / 2). The result is added to the base and capped at Dataint01 percent.
+        /// </remarks>
+        private float GetRatingValue(IUnitEntity entity, uint formulaId, float rating, float baseValue)
         {
-            float baseValue = 0f;
-            switch (property)
+            GameFormulaEntry formula = gameTableManager.GameFormula.GetEntry(formulaId);
+            if (formula == null || entity.Level == 0u)
+                return baseValue;
+
+            float perRating = formula.Datafloat0 / entity.Level * formula.Datafloat01;
+            float softCap = perRating != 0f ? (formula.Datafloat02 - formula.Dataint0) / perRating : float.MaxValue;
+
+            float percent;
+            if (rating < softCap)
+                percent = perRating * rating + formula.Dataint0;
+            else
             {
-                case Property.RatingArmorPierce:
-                case Property.IgnoreArmorBase:
-                    baseValue = entity.GetPropertyValue(Property.IgnoreArmorBase);
-                    break;
-                case Property.RatingAvoidReduce: // Strikethrough
-                case Property.BaseAvoidReduceChance:
-                    baseValue = entity.GetPropertyValue(Property.BaseAvoidReduceChance);
-                    break;
-                case Property.RatingAvoidIncrease: // Deflect
-                case Property.BaseAvoidChance:
-                    baseValue = entity.GetPropertyValue(Property.BaseAvoidChance);
-                    break;
-                case Property.RatingCriticalMitigation:
-                case Property.BaseCriticalMitigation:
-                    baseValue = entity.GetPropertyValue(Property.BaseCriticalMitigation);
-                    break;
-                case Property.RatingCritChanceDecrease: // Deflect Crit Chance
-                case Property.BaseAvoidCritChance:
-                    baseValue = entity.GetPropertyValue(Property.BaseAvoidCritChance);
-                    break;
-                case Property.RatingCritChanceIncrease:
-                case Property.BaseCritChance:
-                    baseValue = entity.GetPropertyValue(Property.BaseCritChance);
-                    break;
-                case Property.RatingCritSeverityIncrease:
-                    // TODO: Confirm Property below
-                    // baseValue = entity.GetPropertyValue(Property.CriticalHitSeverityMultiplier);
-                    break;
-                case Property.RatingDamageReflectAmount:
-                case Property.BaseDamageReflectAmount:
-                    baseValue = entity.GetPropertyValue(Property.BaseDamageReflectAmount);
-                    break;
-                case Property.RatingDamageReflectChance:
-                case Property.BaseDamageReflectChance:
-                    baseValue = entity.GetPropertyValue(Property.BaseDamageReflectChance);
-                    break;
-                case Property.RatingFocusRecovery:
-                case Property.BaseFocusRecoveryInCombat:
-                    baseValue = entity.GetPropertyValue(Property.BaseFocusRecoveryInCombat);
-                    break;
-                case Property.RatingGlanceAmount:
-                case Property.BaseGlanceAmount:
-                    baseValue = entity.GetPropertyValue(Property.BaseGlanceAmount);
-                    break;
-                case Property.RatingGlanceChance:
-                case Property.BaseGlanceChance:
-                    baseValue = entity.GetPropertyValue(Property.BaseGlanceChance);
-                    break;
-                case Property.RatingIntensity:
-                case Property.BaseIntensity:
-                    baseValue = entity.GetPropertyValue(Property.BaseIntensity);
-                    break;
-                case Property.RatingLifesteal:
-                case Property.BaseLifesteal:
-                    baseValue = entity.GetPropertyValue(Property.BaseLifesteal);
-                    break;
-                case Property.RatingMultiHitAmount:
-                case Property.BaseMultiHitAmount:
-                    baseValue = entity.GetPropertyValue(Property.BaseMultiHitAmount);
-                    break;
-                case Property.RatingMultiHitChance:
-                case Property.BaseMultiHitChance:
-                    baseValue = entity.GetPropertyValue(Property.BaseMultiHitChance);
-                    break;
-                case Property.RatingVigor:
-                case Property.BaseVigor:
-                    baseValue = entity.GetPropertyValue(Property.BaseVigor);
-                    break;
-                default:
-                    log.LogWarning($"Unhandled Property in calculating Percentage from Base: {property}");
-                    break;
+                float excess = rating - softCap;
+                percent = MathF.Cos(excess / (excess + formula.Datafloat03) * MathF.PI * 0.5f) * excess * perRating + formula.Datafloat02;
             }
 
-            return baseValue;
+            return MathF.Min(baseValue + percent * 0.01f, formula.Dataint01 * 0.01f);
         }
     }
 }
