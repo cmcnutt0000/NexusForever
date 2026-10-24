@@ -37,7 +37,7 @@ namespace NexusForever.Game.Spell.Type
             if (!base.Cast())
                 return false;
 
-            double castTime = Parameters.CastTimeOverride > 0 ? Parameters.CastTimeOverride / 1000d : Parameters.SpellInfo.Entry.CastTime / 1000d;
+            double castTime = Parameters.CastTimeOverride > 0 ? Parameters.CastTimeOverride / 1000d : CastTime / 1000d;
             if ((CastMethod)Parameters.SpellInfo.BaseInfo.Entry.CastMethod != CastMethod.ClientSideInteraction)
                 events.EnqueueEvent(new SpellEvent(castTime, SucceedClientInteraction));
 

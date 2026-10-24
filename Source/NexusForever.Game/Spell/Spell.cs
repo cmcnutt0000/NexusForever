@@ -72,6 +72,10 @@ namespace NexusForever.Game.Spell
 
         private readonly Dictionary<Spell4EffectsEntry, UpdateTimer> delayedEffects = [];
 
+        // the caster's ModifySpell rows and the effects, changed by its other spell changing effects, worked out once per cast
+        private List<SpellModificationCalculator.Modification> spellModifications;
+        private List<Spell4EffectsEntry> spellEffects;
+
         private IScriptCollection scriptCollection;
 
         #region Dependency Injection
@@ -387,7 +391,7 @@ namespace NexusForever.Game.Spell
                 if (innateCostType == 0)
                     continue;
 
-                if (Caster.GetVitalValue((Vital)innateCostType) < Parameters.SpellInfo.Entry.InnateCosts[i])
+                if (Caster.GetVitalValue((Vital)innateCostType) < GetInnateCost(i))
                     return GlobalSpellManager.Instance.GetFailedCastResultForVital((Vital)innateCostType);
             }
 
@@ -471,9 +475,80 @@ namespace NexusForever.Game.Spell
         }
 
         /// <summary>
+        /// Return the cast time in milliseconds, changed by the caster's ModifySpell effects.
+        /// </summary>
+        protected uint CastTime => (uint)MathF.Max(0f, MathF.Round(GetSpellValue(SpellModificationParameter.CastTime, Parameters.SpellInfo.Entry.CastTime)));
+
+        /// <summary>
+        /// Return a value of the spell changed by the caster's ModifySpell effects, see 0x1403D4210 in the client.
+        /// </summary>
+        protected float GetSpellValue(SpellModificationParameter parameter, float value)
+        {
+            // the spells are picked by base spell or, without one, by spell group, see 0x1405DA6B0 in the client
+            spellModifications ??= Caster.CombatEffectManager
+                .GetEffectData<ISpellEffectModifySpellData>(SpellEffectType.ModifySpell)
+                .Where(d => d.Spell4BaseId != 0u
+                    ? d.Spell4BaseId == Parameters.SpellInfo.BaseInfo.Entry.Id
+                    : d.SpellGroupId != 0u && Parameters.SpellInfo.SpellGroups.Contains(d.SpellGroupId))
+                .SelectMany(d => d.Modifications)
+                .Select(SpellModificationCalculator.Modification.From)
+                .ToList();
+
+            return SpellModificationCalculator.CalculateSpellValue(spellModifications, parameter, value);
+        }
+
+        /// <summary>
+        /// Return the effects of the spell, changed by the caster's AddSpellEffect, SuppressSpellEffect and ModifySpellEffect effects.
+        /// </summary>
+        /// <remarks>
+        /// Worked out once per cast so the delayed and periodic effects keep the same entries.
+        /// </remarks>
+        protected IReadOnlyList<Spell4EffectsEntry> GetSpellEffects()
+        {
+            if (spellEffects != null)
+                return spellEffects;
+
+            List<ISpellEffectModifySpellEffectData> effectModifiers = Caster.CombatEffectManager
+                .GetEffectData<ISpellEffectModifySpellEffectData>(SpellEffectType.ModifySpellEffect)
+                .ToList();
+
+            spellEffects = GetAddedAndSuppressedSpellEffects()
+                .Select(e => ModifySpellEffect(e, effectModifiers))
+                .ToList();
+            return spellEffects;
+        }
+
+        /// <summary>
+        /// Return the effect changed by the caster's ModifySpellEffect effects, see 0x1405D91F0 in the client.
+        /// </summary>
+        private Spell4EffectsEntry ModifySpellEffect(Spell4EffectsEntry entry, List<ISpellEffectModifySpellEffectData> effectModifiers)
+        {
+            var modifications = new List<SpellModificationCalculator.Modification>();
+            foreach (ISpellEffectModifySpellEffectData data in effectModifiers)
+            {
+                // an effect id takes every row, a spell group or all the spells take the rows for the effect's type
+                if (data.Spell4EffectsId != 0u)
+                {
+                    if (data.Spell4EffectsId == entry.Id)
+                        modifications.AddRange(data.Modifications.Select(SpellModificationCalculator.Modification.From));
+                }
+                // TODO: what the client looks up with DataBits01 isn't known
+                else if (data.ListId == 0u && data.EffectType != 0
+                    && (data.AllSpells || data.SpellGroupId != 0u && Parameters.SpellInfo.SpellGroups.Contains(data.SpellGroupId)))
+                {
+                    modifications.AddRange(data.Modifications
+                        .Where(m => m.EffectTypeEnum == (uint)entry.EffectType)
+                        .Select(SpellModificationCalculator.Modification.From));
+                }
+            }
+
+            return SpellModificationCalculator.ApplyToEffect(entry, modifications, GameTableManager.Instance.SpellEffectType.GetEntry((uint)entry.EffectType));
+        }
+
+        /// <summary>
         /// Return the effects of the spell, changed by the caster's AddSpellEffect and SuppressSpellEffect effects.
         /// </summary>
-        private IEnumerable<Spell4EffectsEntry> GetSpellEffects()
+        private IEnumerable<Spell4EffectsEntry> GetAddedAndSuppressedSpellEffects()
         {
             bool AppliesTo(uint spell4BaseId, uint spellGroupId)
             {
@@ -554,8 +629,10 @@ namespace NexusForever.Game.Spell
             if (Caster is not IPlayer player)
                 return;
 
-            if (Parameters.SpellInfo.Entry.SpellCoolDown != 0u)
-                player.SpellManager.SetSpellCooldown(Parameters.SpellInfo, Parameters.SpellInfo.Entry.SpellCoolDown / 1000d, true);
+            // ModifySpell effects can give a cooldown to a spell without one, eg: Medic Running on Empty "have a 5s cooldown instead"
+            float cooldown = GetSpellValue(SpellModificationParameter.Cooldown, Parameters.SpellInfo.Entry.SpellCoolDown);
+            if (cooldown > 0f)
+                player.SpellManager.SetSpellCooldown(Parameters.SpellInfo, cooldown / 1000d, true);
         }
 
         protected void CostSpell()
@@ -569,8 +646,20 @@ namespace NexusForever.Game.Spell
                 if (innateCostType == 0)
                     continue;
 
-                Caster.ModifyVital((Vital)innateCostType, Parameters.SpellInfo.Entry.InnateCosts[i] * -1f);
+                Caster.ModifyVital((Vital)innateCostType, GetInnateCost(i) * -1f);
             }
+        }
+
+        /// <summary>
+        /// Return the innate cost at the supplied index changed by the caster's ModifySpell effects.
+        /// </summary>
+        private float GetInnateCost(int index)
+        {
+            float cost = Parameters.SpellInfo.Entry.InnateCosts[index];
+            if (index > 1)
+                return cost;
+
+            return MathF.Max(0f, GetSpellValue(index == 0 ? SpellModificationParameter.InnateCost0 : SpellModificationParameter.InnateCost1, cost));
         }
 
         private IUnitEntity GetExplicitTarget()
@@ -688,7 +777,7 @@ namespace NexusForever.Game.Spell
         public bool IsMovingInterrupted()
         {
             // TODO: implement correctly
-            return Parameters.UserInitiatedSpellCast && Parameters.SpellInfo.BaseInfo.SpellType.Id != 5 && Parameters.SpellInfo.Entry.CastTime > 0;
+            return Parameters.UserInitiatedSpellCast && Parameters.SpellInfo.BaseInfo.SpellType.Id != 5 && CastTime > 0;
         }
 
         /// <summary>

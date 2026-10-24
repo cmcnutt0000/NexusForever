@@ -54,7 +54,7 @@ namespace NexusForever.Game.Spell.Type
                     if (thresholdsEntry.OrderIndex == 0)
                         continue;
 
-                    events.EnqueueEvent(new SpellEvent(Parameters.SpellInfo.Entry.CastTime / 1000d + nextCastTime / 1000d, () =>
+                    events.EnqueueEvent(new SpellEvent(CastTime / 1000d + nextCastTime / 1000d, () =>
                     {
                         thresholdValue = thresholdsEntry.OrderIndex;
                         SendThresholdUpdate();
@@ -62,7 +62,7 @@ namespace NexusForever.Game.Spell.Type
                 }
             }
 
-            events.EnqueueEvent(new SpellEvent(Parameters.SpellInfo.Entry.CastTime / 1000d, Execute)); // enqueue spell to be executed after cast time
+            events.EnqueueEvent(new SpellEvent(CastTime / 1000d, Execute)); // enqueue spell to be executed after cast time
 
             status = SpellStatus.Casting;
             log.LogTrace($"Spell {Parameters.SpellInfo.Entry.Id} has started casting.");

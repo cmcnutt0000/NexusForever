@@ -40,9 +40,9 @@ namespace NexusForever.Game.Spell
                 return false;
 
             if (Parameters.ParentSpellInfo == null)
-                events.EnqueueEvent(new SpellEvent(Parameters.SpellInfo.Entry.CastTime / 1000d + Parameters.SpellInfo.Entry.ThresholdTime / 1000d, Finish)); // enqueue spell to be executed after cast time
+                events.EnqueueEvent(new SpellEvent(CastTime / 1000d + Parameters.SpellInfo.Entry.ThresholdTime / 1000d, Finish)); // enqueue spell to be executed after cast time
 
-            events.EnqueueEvent(new SpellEvent(Parameters.SpellInfo.Entry.CastTime / 1000d, Execute)); // enqueue spell to be executed after cast time
+            events.EnqueueEvent(new SpellEvent(CastTime / 1000d, Execute)); // enqueue spell to be executed after cast time
 
             status = SpellStatus.Casting;
             log.LogTrace($"Spell {Parameters.SpellInfo.Entry.Id} has started casting.");

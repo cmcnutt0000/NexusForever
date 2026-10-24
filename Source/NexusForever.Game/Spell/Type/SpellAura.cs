@@ -98,7 +98,7 @@ namespace NexusForever.Game.Spell.Type
             if (!base.Cast())
                 return false;
 
-            uint castTime = Parameters.CastTimeOverride > -1 ? (uint)Parameters.CastTimeOverride : Parameters.SpellInfo.Entry.CastTime;
+            uint castTime = Parameters.CastTimeOverride > -1 ? (uint)Parameters.CastTimeOverride : CastTime;
             events.EnqueueEvent(new SpellEvent(castTime / 1000d, () =>
             {
                 SpellStatus previousStatus = status;
@@ -110,7 +110,7 @@ namespace NexusForever.Game.Spell.Type
                 Execute(false);
             })); // enqueue spell to be executed after cast time
 
-            foreach (Spell4EffectsEntry effect in Parameters.SpellInfo.Effects.Where(i => i.TickTime > 0))
+            foreach (Spell4EffectsEntry effect in GetSpellEffects().Where(i => i.TickTime > 0))
                 effectRetriggerTimers.Add(effect, new UpdateTimer(TimeSpan.FromMilliseconds(effect.TickTime)));
 
             if (Parameters.SpellInfo.Entry.SpellDuration > 0 && Parameters.SpellInfo.Entry.SpellDuration < uint.MaxValue)

@@ -54,6 +54,8 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectModifyInterruptArmourData, SpellEffectModifyInterruptArmourData>();
             sc.AddTransient<ISpellEffectModifyRestedXpData, SpellEffectModifyRestedXpData>();
             sc.AddTransient<ISpellEffectModifySpellCooldownData, SpellEffectModifySpellCooldownData>();
+            sc.AddTransient<ISpellEffectModifySpellData, SpellEffectModifySpellData>();
+            sc.AddTransient<ISpellEffectModifySpellEffectData, SpellEffectModifySpellEffectData>();
             sc.AddTransient<ISpellEffectNpcForceFacingData, SpellEffectNpcForceFacingData>();
             sc.AddTransient<ISpellEffectPathMissionIncrementData, SpellEffectPathMissionIncrementData>();
             sc.AddTransient<ISpellEffectPathXpModifyData, SpellEffectPathXpModifyData>();
