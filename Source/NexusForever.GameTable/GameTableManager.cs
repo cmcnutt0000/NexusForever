@@ -300,6 +300,8 @@ namespace NexusForever.GameTable
 
         public GameTable<ItemImbuementEntry> ItemImbuement { get; private set; }
         public GameTable<ItemImbuementRewardEntry> ItemImbuementReward { get; private set; }
+
+        [GameData]
         public GameTable<ItemProficiencyEntry> ItemProficiency { get; private set; }
 
         [GameData]
@@ -422,6 +424,8 @@ namespace NexusForever.GameTable
         public GameTable<PathSettlerInfrastructureEntry> PathSettlerInfrastructure { get; private set; }
         public GameTable<PathSettlerMayorEntry> PathSettlerMayor { get; private set; }
         public GameTable<PathSettlerSheriffEntry> PathSettlerSheriff { get; private set; }
+
+        [GameData]
         public GameTable<PathSoldierActivateEntry> PathSoldierActivate { get; private set; }
         public GameTable<PathSoldierAssassinateEntry> PathSoldierAssassinate { get; private set; }
         public GameTable<PathSoldierEventEntry> PathSoldierEvent { get; private set; }
