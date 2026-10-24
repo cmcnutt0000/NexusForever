@@ -14,6 +14,7 @@ namespace NexusForever.Game.Reputation
     {
         private readonly IPlayer owner;
         private readonly Dictionary<Faction, IReputation> reputations = new();
+        private readonly Dictionary<Faction, float> reputationOverrides = new();
 
         /// <summary>
         /// Create a new <see cref="IReputationManager"/> from existing <see cref="CharacterModel"/> database model.
@@ -82,6 +83,52 @@ namespace NexusForever.Game.Reputation
                 throw new ArgumentException($"Invalid faction id {factionId}!");
 
             return reputations.TryGetValue(factionId, out IReputation reputation) ? reputation : null;
+        }
+
+        /// <summary>
+        /// Temporarily override the reputation for supplied <see cref="Faction"/> with value.
+        /// </summary>
+        /// <remarks>
+        /// The override is read instead of the reputation until it is removed, the reputation itself is unchanged.
+        /// Like the client, which reads its override map before the reputation (0x1403CAC00), there is one override per faction.
+        /// </remarks>
+        public void AddReputationOverride(Faction factionId, float value)
+        {
+            IFactionNode faction = FactionManager.Instance.GetFaction(factionId);
+            if (faction == null)
+                throw new ArgumentException($"Invalid faction id {factionId}!");
+
+            reputationOverrides[factionId] = value;
+
+            owner.Session.EnqueueMessageEncrypted(new ServerReputationOverrideAdd
+            {
+                UnitId    = owner.Guid,
+                FactionId = factionId,
+                Value     = value
+            });
+        }
+
+        /// <summary>
+        /// Remove the temporary reputation override for supplied <see cref="Faction"/>.
+        /// </summary>
+        public void RemoveReputationOverride(Faction factionId)
+        {
+            if (!reputationOverrides.Remove(factionId))
+                return;
+
+            owner.Session.EnqueueMessageEncrypted(new ServerReputationOverrideRemove
+            {
+                UnitId    = owner.Guid,
+                FactionId = factionId
+            });
+        }
+
+        /// <summary>
+        /// Return the temporary reputation override for supplied <see cref="Faction"/>, null if there is none.
+        /// </summary>
+        public float? GetReputationOverride(Faction factionId)
+        {
+            return reputationOverrides.TryGetValue(factionId, out float value) ? value : null;
         }
 
         public IEnumerator<IReputation> GetEnumerator()

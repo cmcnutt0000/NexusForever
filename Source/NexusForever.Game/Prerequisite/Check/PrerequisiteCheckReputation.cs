@@ -50,6 +50,11 @@ namespace NexusForever.Game.Prerequisite.Check
             // only the player's base faction reads the reputation sent by the server (0x1403B5AD0), a temporary faction doesn't
             if (unit is IPlayer player && unit.Faction1 == unit.Faction2)
             {
+                // a temporary override is read before the reputation (0x1403CAC00)
+                float? reputationOverride = player.ReputationManager.GetReputationOverride(factionId);
+                if (reputationOverride != null)
+                    return reputationOverride.Value;
+
                 IReputation reputation = player.ReputationManager.GetReputation(factionId);
                 if (reputation != null)
                     return reputation.Amount;
