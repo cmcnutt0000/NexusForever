@@ -46,7 +46,11 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectPersonalModifierData, SpellEffectPersonalModifierData>();
             sc.AddTransient<ISpellEffectPetCastSpellData, SpellEffectPetCastSpellData>();
             sc.AddTransient<ISpellEffectProcData, SpellEffectProcData>();
+            sc.AddTransient<ISpellEffectProxyChannelData, SpellEffectProxyChannelData>();
+            sc.AddTransient<ISpellEffectProxyChannelVariableTimeData, SpellEffectProxyChannelVariableTimeData>();
             sc.AddTransient<ISpellEffectProxyData, SpellEffectProxyData>();
+            sc.AddTransient<ISpellEffectProxyLinearAEData, SpellEffectProxyLinearAEData>();
+            sc.AddTransient<ISpellEffectProxyRandomExclusiveData, SpellEffectProxyRandomExclusiveData>();
             sc.AddTransient<ISpellEffectQuestAdvanceObjectiveData, SpellEffectQuestAdvanceObjectiveData>();
             sc.AddTransient<ISpellEffectRavelSignalData, SpellEffectRavelSignalData>();
             sc.AddTransient<ISpellEffectReputationModifyData, SpellEffectReputationModifyData>();

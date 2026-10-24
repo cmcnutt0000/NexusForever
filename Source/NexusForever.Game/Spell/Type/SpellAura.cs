@@ -116,7 +116,8 @@ namespace NexusForever.Game.Spell.Type
             if (Parameters.SpellInfo.Entry.SpellDuration > 0 && Parameters.SpellInfo.Entry.SpellDuration < uint.MaxValue)
                 events.EnqueueEvent(new SpellEvent(Parameters.SpellInfo.Entry.SpellDuration / 1000d, Finish));
 
-            if (Parameters.SpellInfo.BaseInfo.Entry.Creature2IdPositionalAoe > 0)
+            // a proxy can place the positional unit itself, see ScheduledProxy
+            if (Parameters.SpellInfo.BaseInfo.Entry.Creature2IdPositionalAoe > 0 && Parameters.PositionalUnitId == 0u)
             {
                 ICreatureInfo creatureInfo = creatureInfoManager.GetCreatureInfo(Parameters.SpellInfo.BaseInfo.Entry.Creature2IdPositionalAoe);
                 if (creatureInfo == null)
