@@ -26,6 +26,8 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectLearnDyeColourData, SpellEffectLearnDyeColourData>();
             sc.AddTransient<ISpellEffectModifyInterruptArmourData, SpellEffectModifyInterruptArmourData>();
             sc.AddTransient<ISpellEffectModifyRestedXpData, SpellEffectModifyRestedXpData>();
+            sc.AddTransient<ISpellEffectPathMissionIncrementData, SpellEffectPathMissionIncrementData>();
+            sc.AddTransient<ISpellEffectPathXpModifyData, SpellEffectPathXpModifyData>();
             sc.AddTransient<ISpellEffectProcData, SpellEffectProcData>();
             sc.AddTransient<ISpellEffectProxyData, SpellEffectProxyData>();
             sc.AddTransient<ISpellEffectQuestAdvanceObjectiveData, SpellEffectQuestAdvanceObjectiveData>();
@@ -36,6 +38,7 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectSummonVanityPetData, SpellEffectSummonVanityPetData>();
             sc.AddTransient<ISpellEffectTeleportData, SpellEffectTeleportData>();
             sc.AddTransient<ISpellEffectTitleGrantData, SpellEffectTitleGrantData>();
+            sc.AddTransient<ISpellEffectTitleRevokeData, SpellEffectTitleRevokeData>();
             sc.AddTransient<ISpellEffectUnitPropertyModifierData, SpellEffectUnitPropertyModifierData>();
             sc.AddTransient<ISpellEffectUnlockMountData, SpellEffectUnlockMountData>();
             sc.AddTransient<ISpellEffectUnlockPetFlairData, SpellEffectUnlockPetFlairData>();
