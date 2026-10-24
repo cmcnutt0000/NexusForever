@@ -3,6 +3,7 @@ using NexusForever.Game.Abstract.Combat;
 using NexusForever.Game.Abstract.Entity;
 using NexusForever.Game.Abstract.Spell;
 using NexusForever.Game.Abstract.Spell.Target;
+using NexusForever.Game.Static.Combat;
 using NexusForever.Game.Static.Entity;
 using NexusForever.Game.Static.Spell;
 using NexusForever.GameTable;
@@ -39,18 +40,34 @@ namespace NexusForever.Game.Combat
         /// </remarks>
         public void CalculateDamage(ISpellExecutionContext executionContext, IUnitEntity victim, ISpellTargetEffectInfo info)
         {
+            IUnitEntity attacker = executionContext.Spell.Caster;
+
             damageDescription.DamageType   = info.Entry.DamageType;
             damageDescription.CombatResult = CombatResult.Hit;
 
             var castData = new CombatLogCastData
             {
-                CasterId     = executionContext.Spell.Caster.Guid,
+                CasterId     = attacker.Guid,
                 TargetId     = victim.Guid,
                 SpellId      = executionContext.Spell.Parameters.SpellInfo.Entry.Id, // TODO: This was updated in order to use ISpell, check if correct
                 CombatResult = damageDescription.CombatResult
             };
 
-            if (CalculateDeflect(executionContext.Spell.Caster, victim))
+            if (victim.CombatEffectManager.IsInvulnerable)
+            {
+                executionContext.AddCombatLog(new CombatLogImmune
+                {
+                    CastData = castData
+                });
+                return;
+            }
+
+            // ForcedAction effects on the attacker take priority over those on the victim
+            ForcedOutcome? forcedOutcome = attacker.CombatEffectManager.ConsumeForcedOutcome(false)
+                ?? victim.CombatEffectManager.ConsumeForcedOutcome(true);
+
+            if (forcedOutcome is ForcedOutcome.Deflect or ForcedOutcome.Miss
+                || forcedOutcome == null && CalculateDeflect(attacker, victim))
             {
                 damageDescription.CombatResult = CombatResult.Avoid;
                 executionContext.AddCombatLog(new CombatLogDeflect
@@ -61,7 +78,16 @@ namespace NexusForever.Game.Combat
                 return;
             }
 
-            uint damage = CalculateBaseDamage(executionContext.Spell.Caster, victim, info.Entry);
+            uint damage = CalculateBaseDamage(attacker, victim, info.Entry);
+
+            // distributed damage is split between every target of the effect
+            if (info.Entry.EffectType == SpellEffectType.DistributedDamage)
+            {
+                int targets = executionContext.TargetCollection.GetTargets(info.Entry.TargetFlags).Count();
+                if (targets > 1)
+                    damage /= (uint)targets;
+            }
+
             damageDescription.RawDamage       = damage;
             damageDescription.RawScaledDamage = damage;
 
@@ -71,17 +97,38 @@ namespace NexusForever.Game.Combat
 
             // TODO: Add in other attacking modifiers like Armor Pierce, Strikethrough, Multi-Hit, etc.
 
-            if (CalculateCrit(ref damage, executionContext.Spell.Caster, victim))
+            if (CalculateCrit(ref damage, attacker, victim, forcedOutcome == ForcedOutcome.Critical))
                 damageDescription.CombatResult = CombatResult.Critical;
 
             uint preGlanceDamage = damage;
-            if (CalculateGlance(ref damage, executionContext.Spell.Caster, victim))
+            if (CalculateGlance(ref damage, attacker, victim))
             {
                 uint glanceDamage = preGlanceDamage - damage;
                 // TODO: Add CombatLog
             }
 
-            uint shieldedAmount = CalculateShieldAmount(damage, victim);
+            // PersonalDmgHealMod effects on either unit
+            DamageType damageType = info.Entry.DamageType;
+            damage = (uint)MathF.Round(damage
+                * attacker.CombatEffectManager.GetDamageDealtMultiplier(victim, damageType)
+                * victim.CombatEffectManager.GetDamageTakenMultiplier(attacker, damageType));
+            uint reduction = victim.CombatEffectManager.GetDamageTakenReduction(attacker);
+            damage = damage > reduction ? damage - reduction : 0u;
+
+            if (info.Entry.EffectType == SpellEffectType.DamageShields)
+            {
+                // only shields take the damage
+                damageDescription.ShieldAbsorbAmount = victim.CombatEffectManager.IsShieldOverloaded ? 0u : Math.Min(damage, victim.Shield);
+                damageDescription.AdjustedDamage     = 0u;
+                info.AddDamage(damageDescription);
+                return;
+            }
+
+            uint absorbedAmount = victim.CombatEffectManager.AbsorbDamage(damageType, damage);
+            damageDescription.AbsorbedAmount = absorbedAmount;
+            damage -= absorbedAmount;
+
+            uint shieldedAmount = victim.CombatEffectManager.IsShieldOverloaded ? 0u : CalculateShieldAmount(damage, victim);
             if (shieldedAmount > damage)
             {
                 damageDescription.ShieldAbsorbAmount = damage;
@@ -128,8 +175,14 @@ namespace NexusForever.Game.Combat
             if (damageType == DamageType.Heal)
             {
                 float multiplier = (caster.GetProperty(Property.HealingMultiplierOutgoing)?.Value ?? 1f)
-                    * (target.GetProperty(Property.HealingMultiplierIncoming)?.Value ?? 1f);
+                    * (target.GetProperty(Property.HealingMultiplierIncoming)?.Value ?? 1f)
+                    * caster.CombatEffectManager.GetHealingDealtMultiplier(target)
+                    * target.CombatEffectManager.GetHealingTakenMultiplier(caster);
                 heal = (uint)MathF.Round(heal * MathF.Max(0f, multiplier));
+
+                uint absorbedAmount = target.CombatEffectManager.AbsorbHealing(heal);
+                damageDescription.AbsorbedAmount = absorbedAmount;
+                heal -= absorbedAmount;
 
                 uint missing = target.MaxHealth - Math.Min(target.Health, target.MaxHealth);
                 damageDescription.OverkillAmount = heal > missing ? heal - missing : 0u;
@@ -436,19 +489,19 @@ namespace NexusForever.Game.Combat
         /// <summary>
         /// Returns whether this attack crit, and if so, modifies the referenced damage value appropriately.
         /// </summary>
-        private bool CalculateCrit(ref uint damage, IUnitEntity attacker, IUnitEntity victim)
+        private bool CalculateCrit(ref uint damage, IUnitEntity attacker, IUnitEntity victim, bool forceCrit = false)
         {
             // TODO: Add in Crit Deflect and Critical Mitigation calculations
 
-            float critRate = GetRatingPercentMod(Property.RatingCritChanceIncrease, attacker);
-            if (critRate <= 0f)
-                return false;
+            if (!forceCrit)
+            {
+                float critRate = GetRatingPercentMod(Property.RatingCritChanceIncrease, attacker);
+                if (critRate <= 0f || !IsSuccessfulChance(critRate))
+                    return false;
+            }
 
-            bool crit = IsSuccessfulChance(critRate);
-            if (crit)
-                damage = (uint)Math.Round(damage * GetRatingPercentMod(Property.RatingCritSeverityIncrease, attacker));
-
-            return crit;
+            damage = (uint)Math.Round(damage * GetRatingPercentMod(Property.RatingCritSeverityIncrease, attacker));
+            return true;
         }
 
         /// <summary>

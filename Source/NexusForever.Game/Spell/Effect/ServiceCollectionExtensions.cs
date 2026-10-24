@@ -12,23 +12,36 @@ namespace NexusForever.Game.Spell.Effect
         {
             sc.AddSingleton<IGlobalSpellEffectManager, GlobalSpellEffectManager>();
 
+            sc.AddTransient<ISpellEffectAbsorptionData, SpellEffectAbsorptionData>();
             sc.AddTransient<ISpellEffectCCStateBreakData, SpellEffectCCStateBreakData>();
             sc.AddTransient<ISpellEffectCCStateSetData, SpellEffectCCStateSetData>();
+            sc.AddTransient<ISpellEffectClampVitalData, SpellEffectClampVitalData>();
             sc.AddTransient<ISpellEffectDamageData, SpellEffectDamageData>();
             sc.AddTransient<ISpellEffectDefaultData, SpellEffectDefaultData>();
+            sc.AddTransient<ISpellEffectDelayDeathData, SpellEffectDelayDeathData>();
             sc.AddTransient<ISpellEffectDisguiseData, SpellEffectDisguiseData>();
             sc.AddTransient<ISpellEffectFactionSetData, SpellEffectFactionSetData>();
+            sc.AddTransient<ISpellEffectForcedActionData, SpellEffectForcedActionData>();
             sc.AddTransient<ISpellEffectForcedMoveData, SpellEffectForcedMoveData>();
             sc.AddTransient<ISpellEffectLearnDyeColourData, SpellEffectLearnDyeColourData>();
             sc.AddTransient<ISpellEffectModifyInterruptArmourData, SpellEffectModifyInterruptArmourData>();
+            sc.AddTransient<ISpellEffectNpcForceFacingData, SpellEffectNpcForceFacingData>();
+            sc.AddTransient<ISpellEffectPersonalModifierData, SpellEffectPersonalModifierData>();
             sc.AddTransient<ISpellEffectProcData, SpellEffectProcData>();
             sc.AddTransient<ISpellEffectProxyData, SpellEffectProxyData>();
+            sc.AddTransient<ISpellEffectSapVitalData, SpellEffectSapVitalData>();
+            sc.AddTransient<ISpellEffectSpellDispelData, SpellEffectSpellDispelData>();
+            sc.AddTransient<ISpellEffectSpellEffectImmunityData, SpellEffectSpellEffectImmunityData>();
             sc.AddTransient<ISpellEffectSpellForceRemoveData, SpellEffectSpellForceRemoveData>();
+            sc.AddTransient<ISpellEffectSpellImmunityData, SpellEffectSpellImmunityData>();
             sc.AddTransient<ISpellEffectSummonMountData, SpellEffectSummonMountData>();
             sc.AddTransient<ISpellEffectSummonVanityPetData, SpellEffectSummonVanityPetData>();
             sc.AddTransient<ISpellEffectTeleportData, SpellEffectTeleportData>();
+            sc.AddTransient<ISpellEffectThreatModificationData, SpellEffectThreatModificationData>();
             sc.AddTransient<ISpellEffectTitleGrantData, SpellEffectTitleGrantData>();
+            sc.AddTransient<ISpellEffectTransferenceData, SpellEffectTransferenceData>();
             sc.AddTransient<ISpellEffectUnitPropertyModifierData, SpellEffectUnitPropertyModifierData>();
+            sc.AddTransient<ISpellEffectUnitStateSetData, SpellEffectUnitStateSetData>();
             sc.AddTransient<ISpellEffectUnlockMountData, SpellEffectUnlockMountData>();
             sc.AddTransient<ISpellEffectUnlockPetFlairData, SpellEffectUnlockPetFlairData>();
             sc.AddTransient<ISpellEffectUnlockVanityPetData, SpellEffectUnlockVanityPetData>();

@@ -6,6 +6,7 @@ using NexusForever.Game.Abstract.Spell.Target;
 using NexusForever.Game.Static.Spell;
 using NexusForever.Game.Static.Spell.Effect;
 using NexusForever.GameTable.Model;
+using NexusForever.Network.World.Combat;
 using NexusForever.Network.World.Message.Model;
 using NexusForever.Network.World.Message.Model.Shared;
 using NexusForever.Shared.Game;
@@ -123,6 +124,22 @@ namespace NexusForever.Game.Spell.Target
             try
             {
                 IUnitEntity target = Target.GetTarget();
+
+                // SpellImmunity and SpellEffectImmunity effects on the target
+                if (target.CombatEffectManager.IsImmune(executionContext.Spell, Entry.EffectType))
+                {
+                    executionContext.AddCombatLog(new CombatLogImmune
+                    {
+                        CastData = new CombatLogCastData
+                        {
+                            CasterId     = executionContext.Spell.Caster.Guid,
+                            TargetId     = target.Guid,
+                            SpellId      = executionContext.Spell.Spell4Id,
+                            CombatResult = CombatResult.Avoid
+                        }
+                    });
+                    return SpellEffectExecutionResult.PreventEffect;
+                }
 
                 SpellEffectExecutionResult result = spellEffectHandlerInvoker.InvokeApplyHandler(executionContext, target, this);
                 if (result == SpellEffectExecutionResult.Ok)

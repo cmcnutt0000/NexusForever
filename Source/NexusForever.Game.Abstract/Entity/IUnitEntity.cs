@@ -33,6 +33,7 @@ namespace NexusForever.Game.Abstract.Entity
         public IThreatManager ThreatManager { get; }
         public IProcManager ProcManager { get; }
         public ICrowdControlManager CrowdControlManager { get; }
+        public ICombatEffectManager CombatEffectManager { get; }
 
         /// <summary>
         /// Add a <see cref="Property"/> modifier given a Spell4Id and <see cref="ISpellPropertyModifier"/> instance.

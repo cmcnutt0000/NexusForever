@@ -13,6 +13,7 @@ namespace NexusForever.Game.Combat
         {
             sc.AddGameCombatCrowdControl();
 
+            sc.AddTransient<ICombatEffectManager, CombatEffectManager>();
             sc.AddTransientFactory<IDamageCalculator, DamageCalculator>();
             sc.AddTransient<IDamageDescription, DamageDescription>();
         }

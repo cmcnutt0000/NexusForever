@@ -9,6 +9,7 @@ using NexusForever.Game.Abstract.Spell.Proc;
 using NexusForever.Game.Abstract.Spell.Target;
 using NexusForever.Game.Combat;
 using NexusForever.Game.Combat.CrowdControl;
+using NexusForever.Game.Spell;
 using NexusForever.Game.Static;
 using NexusForever.Game.Static.Entity;
 using NexusForever.Game.Static.PublicEvent;
@@ -89,6 +90,7 @@ namespace NexusForever.Game.Entity
         public IThreatManager ThreatManager { get; private set; }
         public IProcManager ProcManager { get; private set; }
         public ICrowdControlManager CrowdControlManager { get; private set; }
+        public ICombatEffectManager CombatEffectManager { get; private set; }
 
         private IStatUpdateManager statUpdateManager;
 
@@ -119,6 +121,8 @@ namespace NexusForever.Game.Entity
             ProcManager.Initialise(this);
             CrowdControlManager = LegacyServiceProvider.Provider.GetService<ICrowdControlManager>();
             CrowdControlManager.Initialise(this);
+            CombatEffectManager = LegacyServiceProvider.Provider.GetService<ICombatEffectManager>();
+            CombatEffectManager.Initialise(this);
 
             InitialiseHitRadius();
         }
@@ -541,7 +545,8 @@ namespace NexusForever.Game.Entity
                 return;
 
             // TODO: Calculate Threat properly
-            ThreatManager.UpdateThreat(attacker, (int)damageDescription.RawDamage);
+            if (!attacker.CombatEffectManager.HasEffect(SpellEffectType.AggroImmune))
+                ThreatManager.UpdateThreat(attacker, (int)damageDescription.RawDamage);
 
             Shield -= damageDescription.ShieldAbsorbAmount;
             ModifyHealth(damageDescription.AdjustedDamage, damageDescription.DamageType, attacker);
@@ -556,14 +561,24 @@ namespace NexusForever.Game.Entity
         public virtual void ModifyHealth(uint amount, DamageType? type, IUnitEntity source)
         {
             long newHealth = Health;
+            uint preventDeathSpell4Id = 0u;
             if (type is DamageType.Heal or null)
                 newHealth += amount;
             else
-                newHealth -= amount;
+            {
+                newHealth = Math.Max(newHealth - amount, CombatEffectManager.GetMinimumHealth());
+                if (newHealth <= 0 && CombatEffectManager.TryPreventDeath(out preventDeathSpell4Id))
+                    newHealth = 1;
+            }
 
+            newHealth = Math.Min(newHealth, CombatEffectManager.GetMaximumHealth());
             Health = (uint)Math.Clamp(newHealth, 0u, MaxHealth);
 
             scriptCollection?.Invoke<IUnitScript>(s => s.OnHealthChange(source, amount, type));
+
+            // cast after health is set so the spell can change it, eg: "To the Pain" sets health to 30%
+            if (preventDeathSpell4Id != 0u)
+                CastSpell(preventDeathSpell4Id, new SpellParameters());
 
             if (Health == 0)
                 OnDeath(source);
