@@ -67,7 +67,23 @@ namespace NexusForever.Script.Main.AI
             if (entity.IsCasting())
                 return;
 
+            if (IsExecutionDelayed())
+                return;
+
             UpdateAI(lastTick);
+        }
+
+        /// <summary>
+        /// Returns if an NpcExecutionDelay effect holds the next action of the creature.
+        /// </summary>
+        /// <remarks>
+        /// Creature abilities put one on their caster, most for 1 to 3 seconds.
+        /// </remarks>
+        private bool IsExecutionDelayed()
+        {
+            return entity.GetAffectingSpells()
+                .SelectMany(s => s.GetEffectsByType(SpellEffectType.NpcExecutionDelay))
+                .Any(e => !e.IsFinalised && !e.IsPending);
         }
 
         protected virtual void UpdateAI(double lastTick)

@@ -54,7 +54,7 @@ namespace NexusForever.Game.Entity
         /// </summary>
         public IWorldEntity Summon(ICreatureInfo creatureInfo, Vector3 position, Vector3 rotation, OnAddDelegate add = null)
         {
-            IWorldEntity entity = entityFactory.CreateWorldEntity(creatureInfo.Entry.CreationTypeEnum);
+            IWorldEntity entity = entityFactory.CreateWorldEntity(GetEntityType(creatureInfo));
             Summon(creatureInfo, entity, position, rotation, add);
             return entity;
         }
@@ -67,6 +67,23 @@ namespace NexusForever.Game.Entity
             IWorldEntity entity = entityFactory.CreateWorldEntity(entityType);
             Summon(creatureInfo, entity, position, rotation, add);
             return entity;
+        }
+
+        /// <summary>
+        /// Return the <see cref="EntityType"/> a creature is created as.
+        /// </summary>
+        /// <remarks>
+        /// Creature2.creationTypeEnum is the entity type for every creation type spawned in the world database except two:
+        /// the 44 spawns of creation type 18 (<see cref="EntityType.PinataLoot"/>) creatures are bind points and the 1,163 spawns of creation type 20 (<see cref="EntityType.Player"/>) creatures are simple collidables.
+        /// </remarks>
+        private static EntityType GetEntityType(ICreatureInfo creatureInfo)
+        {
+            return creatureInfo.Entry.CreationTypeEnum switch
+            {
+                EntityType.PinataLoot => EntityType.BindPoint,
+                EntityType.Player     => EntityType.SimpleCollidable,
+                _                     => creatureInfo.Entry.CreationTypeEnum
+            };
         }
 
         private void Summon(ICreatureInfo creatureInfo, IWorldEntity entity, Vector3 position, Vector3 rotation, OnAddDelegate add = null)
@@ -163,7 +180,8 @@ namespace NexusForever.Game.Entity
         /// </summary>
         public void Unsummon()
         {
-            foreach (uint guid in summonGuids)
+            // Unsummon(uint) removes each guid from the set, iterate over a copy
+            foreach (uint guid in summonGuids.ToList())
                 Unsummon(guid);
 
             summonGuids.Clear();
