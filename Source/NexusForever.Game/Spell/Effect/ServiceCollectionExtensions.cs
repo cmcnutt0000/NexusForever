@@ -29,6 +29,7 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectDisembarkData, SpellEffectDisembarkData>();
             sc.AddTransient<ISpellEffectDisguiseData, SpellEffectDisguiseData>();
             sc.AddTransient<ISpellEffectDisguiseOutfitData, SpellEffectDisguiseOutfitData>();
+            sc.AddTransient<ISpellEffectFacilityModificationData, SpellEffectFacilityModificationData>();
             sc.AddTransient<ISpellEffectFactionSetData, SpellEffectFactionSetData>();
             sc.AddTransient<ISpellEffectForcedActionData, SpellEffectForcedActionData>();
             sc.AddTransient<ISpellEffectForcedMoveData, SpellEffectForcedMoveData>();
@@ -38,6 +39,11 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectGiveSchematicData, SpellEffectGiveSchematicData>();
             sc.AddTransient<ISpellEffectGrantLevelScaledData, SpellEffectGrantLevelScaledData>();
             sc.AddTransient<ISpellEffectGrantXpData, SpellEffectGrantXpData>();
+            sc.AddTransient<ISpellEffectHazardEnableData, SpellEffectHazardEnableData>();
+            sc.AddTransient<ISpellEffectHazardModifyData, SpellEffectHazardModifyData>();
+            sc.AddTransient<ISpellEffectHazardSuspendData, SpellEffectHazardSuspendData>();
+            sc.AddTransient<ISpellEffectHousingPlantSeedData, SpellEffectHousingPlantSeedData>();
+            sc.AddTransient<ISpellEffectHousingTeleportData, SpellEffectHousingTeleportData>();
             sc.AddTransient<ISpellEffectItemVisualSwapData, SpellEffectItemVisualSwapData>();
             sc.AddTransient<ISpellEffectLearnDyeColourData, SpellEffectLearnDyeColourData>();
             sc.AddTransient<ISpellEffectLootTableData, SpellEffectLootTableData>();
@@ -61,7 +67,9 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectRewardBuffModifierData, SpellEffectRewardBuffModifierData>();
             sc.AddTransient<ISpellEffectRewardPropertyModifierData, SpellEffectRewardPropertyModifierData>();
             sc.AddTransient<ISpellEffectSapVitalData, SpellEffectSapVitalData>();
+            sc.AddTransient<ISpellEffectSetBusyData, SpellEffectSetBusyData>();
             sc.AddTransient<ISpellEffectSetMatchingEligibilityData, SpellEffectSetMatchingEligibilityData>();
+            sc.AddTransient<ISpellEffectSettlerCampfireData, SpellEffectSettlerCampfireData>();
             sc.AddTransient<ISpellEffectSpellDispelData, SpellEffectSpellDispelData>();
             sc.AddTransient<ISpellEffectSpellEffectImmunityData, SpellEffectSpellEffectImmunityData>();
             sc.AddTransient<ISpellEffectSpellForceRemoveData, SpellEffectSpellForceRemoveData>();
@@ -72,6 +80,7 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectSummonTrapData, SpellEffectSummonTrapData>();
             sc.AddTransient<ISpellEffectSummonVanityPetData, SpellEffectSummonVanityPetData>();
             sc.AddTransient<ISpellEffectSummonVehicleData, SpellEffectSummonVehicleData>();
+            sc.AddTransient<ISpellEffectSupportStuckData, SpellEffectSupportStuckData>();
             sc.AddTransient<ISpellEffectTeleportData, SpellEffectTeleportData>();
             sc.AddTransient<ISpellEffectThreatModificationData, SpellEffectThreatModificationData>();
             sc.AddTransient<ISpellEffectTitleGrantData, SpellEffectTitleGrantData>();
