@@ -9,7 +9,7 @@ using NexusForever.Game.Static.Spell.Effect;
 namespace NexusForever.Game.Spell.Effect.Handler
 {
     /// <summary>
-    /// The Explorer's "Searching" spells (1s, 2s and 3s casts), they look for the clue of a scavenger hunt.
+    /// The Explorer's "Searching" spells (1s, 2s and 3s casts), they look for the clue of a scavenger hunt (inferred from ClientPathExplorerCastSearching).
     /// </summary>
     /// <remarks>
     /// The client makes a plain effect for this type (0x140718120) and tests for no effect of it, the work is the server's.

@@ -9,7 +9,7 @@ using NexusForever.Game.Static.Spell.Effect;
 namespace NexusForever.Game.Spell.Effect.Handler
 {
     /// <summary>
-    /// Gives a facility to or takes one from the target, facilities mark units for creature AI and scripts, eg: "Requires creature 18728 with facility 6776".
+    /// Gives a facility to or takes one from the target, eg: "Requires creature 18728 with facility 6776". Facilities mark units for creature AI and scripts (inferred from spell names such as "Hunt Facility" and "Charmer Generic Facility - Assist").
     /// </summary>
     /// <remarks>
     /// The client makes a plain effect for this type (0x140718120) and tests for no effect of it, the work is the server's.

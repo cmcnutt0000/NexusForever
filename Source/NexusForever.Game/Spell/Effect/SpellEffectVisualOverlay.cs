@@ -13,7 +13,7 @@ namespace NexusForever.Game.Spell.Effect
     /// </summary>
     /// <remarks>
     /// The unit's own appearance is left as it is, so an effect that ends has nothing to put back, its handler only sends the visuals again.
-    /// The whole appearance of a mimic goes first, then outfits, then single item slots. Of several effects of a type the last one applied wins.
+    /// The whole appearance of a mimic goes first, then outfits, then single item slots, and of several effects of a type the last one applied wins; that order is a choice, the client doesn't say.
     /// </remarks>
     public static class SpellEffectVisualOverlay
     {
