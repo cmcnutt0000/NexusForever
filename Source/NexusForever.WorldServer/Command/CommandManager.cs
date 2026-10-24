@@ -46,7 +46,9 @@ namespace NexusForever.WorldServer.Command
             BuildConverters();
             InitialiseHandlers();
 
-            if (!WindowsServiceHelpers.IsWindowsService() && !SystemdHelpers.IsSystemdService())
+            // console input can't be read when running as a service or with redirected input (Aspire, containers, detached launches),
+            // Console.KeyAvailable throws and takes the process down; the web console still works
+            if (!WindowsServiceHelpers.IsWindowsService() && !SystemdHelpers.IsSystemdService() && !Console.IsInputRedirected)
                 InitialiseCommandThread();
         }
 
