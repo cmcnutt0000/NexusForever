@@ -319,6 +319,37 @@ namespace NexusForever.Game.Combat
         }
 
         /// <summary>
+        /// Return the units that receive part of the threat the owner generates and the fraction each receives.
+        /// </summary>
+        public IEnumerable<(uint ReceiverGuid, float Fraction)> GetThreatTransfers()
+        {
+            foreach ((CombatEffect effect, ISpellEffectThreatTransferData data) in GetEffects<ISpellEffectThreatTransferData>(SpellEffectType.ThreatTransfer))
+            {
+                // BearerToCaster is kept by the bearer and goes to the caster, CasterToBearer is kept by the caster and goes to the bearer
+                uint receiverGuid = data.Type == ThreatTransferType.CasterToBearer ? effect.Info.Target.Guid : effect.CasterGuid;
+                if (receiverGuid != owner.Guid)
+                    yield return (receiverGuid, data.Fraction);
+            }
+        }
+
+        /// <summary>
+        /// Return the live units, the owner included, that share health with the owner through a SharedHealthPool effect.
+        /// </summary>
+        public IReadOnlyList<IUnitEntity> GetSharedHealthPool()
+        {
+            CombatEffect pool = effects.FirstOrDefault(e => e.Info.Entry.EffectType == SpellEffectType.SharedHealthPool);
+            if (pool == null)
+                return [];
+
+            // every target of the same cast with the effect still active
+            return pool.Info.Target.Collection
+                .Where(t => !t.IsFinalised && t.GetEffectsByType(SpellEffectType.SharedHealthPool).Any(e => !e.IsFinalised && !e.IsPending))
+                .Select(t => t.GetTarget())
+                .Where(u => u != null && u.IsAlive)
+                .ToList();
+        }
+
+        /// <summary>
         /// Return the minimum health ClampVital effects allow.
         /// </summary>
         public uint GetMinimumHealth()

@@ -12,7 +12,8 @@ using NexusForever.Shared;
 namespace NexusForever.Game.Spell.Effect.Handler
 {
     /// <remarks>
-    /// TODO: the damage changes with distance, the fall off fields (DataBits02 to DataBits05) aren't known yet.
+    /// TODO: the damage changes with distance, DataBits02 (2, 3 and 4) is a DistanceDamageModifier id, a curve of 5 distance fractions and damage multipliers.
+    /// The client only caches the table (0x140560D90), what the distance is a fraction of isn't known.
     /// </remarks>
     [SpellEffectHandler(SpellEffectType.DistanceDependentDamage)]
     public class SpellEffectDistanceDependentDamageHandler : SpellEffectDamageHandler

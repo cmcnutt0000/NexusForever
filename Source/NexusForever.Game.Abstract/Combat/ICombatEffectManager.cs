@@ -105,6 +105,16 @@ namespace NexusForever.Game.Abstract.Combat
         bool IsImmune(ISpell spell, SpellEffectType effectType);
 
         /// <summary>
+        /// Return the units, the owner included, that receive part of the threat the owner generates and the fraction each receives.
+        /// </summary>
+        IEnumerable<(uint ReceiverGuid, float Fraction)> GetThreatTransfers();
+
+        /// <summary>
+        /// Return the live units, the owner included, that share health with the owner through a SharedHealthPool effect.
+        /// </summary>
+        IReadOnlyList<IUnitEntity> GetSharedHealthPool();
+
+        /// <summary>
         /// Return the minimum health ClampVital effects allow.
         /// </summary>
         uint GetMinimumHealth();
