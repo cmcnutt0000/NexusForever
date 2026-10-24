@@ -55,6 +55,16 @@ namespace NexusForever.Game.Abstract.Entity
         /// </summary>
         ulong GroupAssociation { get; set; }
 
+        /// <summary>
+        /// Mask of the phases the <see cref="IPlayer"/> perceives.
+        /// </summary>
+        uint PhasesIPerceive { get; }
+
+        /// <summary>
+        /// Mask of the phases that perceive the <see cref="IPlayer"/>.
+        /// </summary>
+        uint PhasesThatPerceiveMe { get; }
+
         bool IsSitting { get; }
 
         /// <summary>
@@ -179,6 +189,11 @@ namespace NexusForever.Game.Abstract.Entity
         /// Dismounts this <see cref="IPlayer"/> from a vehicle that it's attached to
         /// </summary>
         void Dismount();
+
+        /// <summary>
+        /// Set the phases <see cref="IPlayer"/> perceives and is perceived by and send them to the client.
+        /// </summary>
+        void SetPhases(uint phasesIPerceive, uint phasesThatPerceiveMe);
 
         /// <summary>
         /// Returns the time in seconds that has past since the last <see cref="IPlayer"/> save.

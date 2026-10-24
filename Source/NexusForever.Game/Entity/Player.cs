@@ -196,6 +196,16 @@ namespace NexusForever.Game.Entity
         /// </summary>
         public ulong GroupAssociation { get; set; }
 
+        /// <summary>
+        /// Mask of the phases the <see cref="IPlayer"/> perceives.
+        /// </summary>
+        public uint PhasesIPerceive { get; private set; } = 1u;
+
+        /// <summary>
+        /// Mask of the phases that perceive the <see cref="IPlayer"/>.
+        /// </summary>
+        public uint PhasesThatPerceiveMe { get; private set; } = 1u;
+
         public bool IsSitting => currentChairGuid != null;
         private uint? currentChairGuid;
 
@@ -806,11 +816,8 @@ namespace NexusForever.Game.Entity
             Account.RewardPropertyManager.SendInitialPackets();
             ResurrectionManager.SendInitialPackets();
 
-            Session.EnqueueMessageEncrypted(new ServerPhaseVisibilityWorldLocation
-            {
-                PhasesIPerceive = 1,
-                PhasesThatPerceiveMe = 1
-            });
+            // the client is put back in phase 1 whenever it enters a map
+            SetPhases(1u, 1u);
 
             log.Trace($"Player {Name} took {(DateTime.UtcNow - start).TotalMilliseconds}ms to send packets after add to map.");
         }
@@ -1348,6 +1355,21 @@ namespace NexusForever.Game.Entity
 
             IVehicleEntity vehicle = GetVisible<IVehicleEntity>(PlatformGuid.Value);
             vehicle?.PassengerRemove(this);
+        }
+
+        /// <summary>
+        /// Set the phases <see cref="IPlayer"/> perceives and is perceived by and send them to the client.
+        /// </summary>
+        public void SetPhases(uint phasesIPerceive, uint phasesThatPerceiveMe)
+        {
+            PhasesIPerceive      = phasesIPerceive;
+            PhasesThatPerceiveMe = phasesThatPerceiveMe;
+
+            Session.EnqueueMessageEncrypted(new ServerPhaseVisibilityWorldLocation
+            {
+                PhasesThatPerceiveMe = phasesThatPerceiveMe,
+                PhasesIPerceive      = phasesIPerceive
+            });
         }
 
         /// <summary>

@@ -14,6 +14,7 @@ namespace NexusForever.Game.Spell.Effect
 
             sc.AddTransient<ISpellEffectCCStateBreakData, SpellEffectCCStateBreakData>();
             sc.AddTransient<ISpellEffectCCStateSetData, SpellEffectCCStateSetData>();
+            sc.AddTransient<ISpellEffectChangePhaseData, SpellEffectChangePhaseData>();
             sc.AddTransient<ISpellEffectDamageData, SpellEffectDamageData>();
             sc.AddTransient<ISpellEffectDefaultData, SpellEffectDefaultData>();
             sc.AddTransient<ISpellEffectDisembarkData, SpellEffectDisembarkData>();
