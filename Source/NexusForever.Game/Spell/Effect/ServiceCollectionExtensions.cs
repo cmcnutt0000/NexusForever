@@ -87,6 +87,7 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectTitleRevokeData, SpellEffectTitleRevokeData>();
             sc.AddTransient<ISpellEffectTradeSkillProfessionData, SpellEffectTradeSkillProfessionData>();
             sc.AddTransient<ISpellEffectTransferenceData, SpellEffectTransferenceData>();
+            sc.AddTransient<ISpellEffectUnitPropertyConversionData, SpellEffectUnitPropertyConversionData>();
             sc.AddTransient<ISpellEffectUnitPropertyModifierData, SpellEffectUnitPropertyModifierData>();
             sc.AddTransient<ISpellEffectUnitStateSetData, SpellEffectUnitStateSetData>();
             sc.AddTransient<ISpellEffectUnlockActionBarData, SpellEffectUnlockActionBarData>();
