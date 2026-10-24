@@ -18,6 +18,8 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectAddSpellData, SpellEffectAddSpellData>();
             sc.AddTransient<ISpellEffectCCStateBreakData, SpellEffectCCStateBreakData>();
             sc.AddTransient<ISpellEffectCCStateSetData, SpellEffectCCStateSetData>();
+            sc.AddTransient<ISpellEffectChangeDisplayNameData, SpellEffectChangeDisplayNameData>();
+            sc.AddTransient<ISpellEffectChangeIconData, SpellEffectChangeIconData>();
             sc.AddTransient<ISpellEffectChangePhaseData, SpellEffectChangePhaseData>();
             sc.AddTransient<ISpellEffectClampVitalData, SpellEffectClampVitalData>();
             sc.AddTransient<ISpellEffectDamageData, SpellEffectDamageData>();
@@ -25,6 +27,7 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectDelayDeathData, SpellEffectDelayDeathData>();
             sc.AddTransient<ISpellEffectDisembarkData, SpellEffectDisembarkData>();
             sc.AddTransient<ISpellEffectDisguiseData, SpellEffectDisguiseData>();
+            sc.AddTransient<ISpellEffectDisguiseOutfitData, SpellEffectDisguiseOutfitData>();
             sc.AddTransient<ISpellEffectFactionSetData, SpellEffectFactionSetData>();
             sc.AddTransient<ISpellEffectForcedActionData, SpellEffectForcedActionData>();
             sc.AddTransient<ISpellEffectForcedMoveData, SpellEffectForcedMoveData>();
@@ -34,8 +37,10 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectGiveSchematicData, SpellEffectGiveSchematicData>();
             sc.AddTransient<ISpellEffectGrantLevelScaledData, SpellEffectGrantLevelScaledData>();
             sc.AddTransient<ISpellEffectGrantXpData, SpellEffectGrantXpData>();
+            sc.AddTransient<ISpellEffectItemVisualSwapData, SpellEffectItemVisualSwapData>();
             sc.AddTransient<ISpellEffectLearnDyeColourData, SpellEffectLearnDyeColourData>();
             sc.AddTransient<ISpellEffectLootTableData, SpellEffectLootTableData>();
+            sc.AddTransient<ISpellEffectMimicDisguiseData, SpellEffectMimicDisguiseData>();
             sc.AddTransient<ISpellEffectModifyAbilityChargesData, SpellEffectModifyAbilityChargesData>();
             sc.AddTransient<ISpellEffectModifyInterruptArmourData, SpellEffectModifyInterruptArmourData>();
             sc.AddTransient<ISpellEffectModifyRestedXpData, SpellEffectModifyRestedXpData>();
