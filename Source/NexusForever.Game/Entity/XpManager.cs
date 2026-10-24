@@ -72,11 +72,7 @@ namespace NexusForever.Game.Entity
             float xpForLevel     = GameTableManager.Instance.XpPerLevel.GetEntry(player.Level).MinXpForLevel;
             float xpForNextLevel = GameTableManager.Instance.XpPerLevel.GetEntry(player.Level + 1).MinXpForLevel;
 
-            uint maximumBonusXp;
-            if (player.Level < 50)
-                maximumBonusXp = (uint)((xpForNextLevel - xpForLevel) * 1.5f);
-            else
-                maximumBonusXp = 0; // TODO: Calculate Elder Gem Rest Bonus XP
+            uint maximumBonusXp = GetMaximumRestBonusXp();
 
             double xpPercentEarned;
 
@@ -101,6 +97,20 @@ namespace NexusForever.Game.Entity
             uint bonusXpValue = Math.Clamp((uint)((xpForNextLevel - xpForLevel) * xpPercentEarned), 0, maximumBonusXp);
             uint totalBonusXp = Math.Clamp(model.RestBonusXp + bonusXpValue, 0u, maximumBonusXp);
             RestBonusXp = totalBonusXp;
+        }
+
+        /// <summary>
+        /// Return the maximum rest bonus experience for the current level.
+        /// </summary>
+        private uint GetMaximumRestBonusXp()
+        {
+            // TODO: Calculate Elder Gem Rest Bonus XP
+            if (player.Level >= 50)
+                return 0u;
+
+            float xpForLevel     = GameTableManager.Instance.XpPerLevel.GetEntry(player.Level).MinXpForLevel;
+            float xpForNextLevel = GameTableManager.Instance.XpPerLevel.GetEntry(player.Level + 1).MinXpForLevel;
+            return (uint)((xpForNextLevel - xpForLevel) * 1.5f);
         }
 
         /// <summary>
@@ -176,6 +186,23 @@ namespace NexusForever.Game.Entity
 
             TotalXp = newXp;
             GrantLevel(newLevel);
+        }
+
+        /// <summary>
+        /// Add the supplied multiple of the experience needed for the current level to the rest bonus experience.
+        /// </summary>
+        /// <remarks>
+        /// The rest bonus stays between 0 and its maximum, a negative multiple removes rest bonus experience.
+        /// </remarks>
+        public void ModifyRestBonusXp(float levels)
+        {
+            float xpForLevel     = GameTableManager.Instance.XpPerLevel.GetEntry(player.Level).MinXpForLevel;
+            float xpForNextLevel = GameTableManager.Instance.XpPerLevel.GetEntry(player.Level + 1).MinXpForLevel;
+
+            long restBonusXp = RestBonusXp + (long)((xpForNextLevel - xpForLevel) * levels);
+            RestBonusXp = (uint)Math.Clamp(restBonusXp, 0L, GetMaximumRestBonusXp());
+
+            // TODO: the client is only sent the rest bonus in ServerPlayerCreate, no message to update it is known
         }
 
         /// <summary>

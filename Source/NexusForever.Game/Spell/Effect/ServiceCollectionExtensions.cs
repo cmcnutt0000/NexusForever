@@ -21,12 +21,16 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectFactionSetData, SpellEffectFactionSetData>();
             sc.AddTransient<ISpellEffectForcedMoveData, SpellEffectForcedMoveData>();
             sc.AddTransient<ISpellEffectGiveItemToPlayerData, SpellEffectGiveItemToPlayerData>();
+            sc.AddTransient<ISpellEffectGrantLevelScaledData, SpellEffectGrantLevelScaledData>();
+            sc.AddTransient<ISpellEffectGrantXpData, SpellEffectGrantXpData>();
             sc.AddTransient<ISpellEffectLearnDyeColourData, SpellEffectLearnDyeColourData>();
             sc.AddTransient<ISpellEffectModifyInterruptArmourData, SpellEffectModifyInterruptArmourData>();
+            sc.AddTransient<ISpellEffectModifyRestedXpData, SpellEffectModifyRestedXpData>();
             sc.AddTransient<ISpellEffectProcData, SpellEffectProcData>();
             sc.AddTransient<ISpellEffectProxyData, SpellEffectProxyData>();
             sc.AddTransient<ISpellEffectQuestAdvanceObjectiveData, SpellEffectQuestAdvanceObjectiveData>();
             sc.AddTransient<ISpellEffectReputationModifyData, SpellEffectReputationModifyData>();
+            sc.AddTransient<ISpellEffectRestedXpDecorBonusData, SpellEffectRestedXpDecorBonusData>();
             sc.AddTransient<ISpellEffectSpellForceRemoveData, SpellEffectSpellForceRemoveData>();
             sc.AddTransient<ISpellEffectSummonMountData, SpellEffectSummonMountData>();
             sc.AddTransient<ISpellEffectSummonVanityPetData, SpellEffectSummonVanityPetData>();

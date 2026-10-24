@@ -21,5 +21,13 @@ namespace NexusForever.Game.Abstract.Entity
         /// <param name="newLevel">New level to be set</param>
         /// <param name="reason"><see cref="ExpReason"/> for the level grant</param>
         void SetLevel(byte newLevel, ExpReason reason = ExpReason.Cheat);
+
+        /// <summary>
+        /// Add the supplied multiple of the experience needed for the current level to the rest bonus experience.
+        /// </summary>
+        /// <remarks>
+        /// The rest bonus stays between 0 and its maximum, a negative multiple removes rest bonus experience.
+        /// </remarks>
+        void ModifyRestBonusXp(float levels);
     }
 }
