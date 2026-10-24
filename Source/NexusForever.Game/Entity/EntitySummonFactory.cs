@@ -163,7 +163,8 @@ namespace NexusForever.Game.Entity
         /// </summary>
         public void Unsummon()
         {
-            foreach (uint guid in summonGuids)
+            // Unsummon(uint) removes each guid from the set, iterate over a copy
+            foreach (uint guid in summonGuids.ToList())
                 Unsummon(guid);
 
             summonGuids.Clear();
