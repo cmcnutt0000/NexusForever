@@ -14,8 +14,7 @@ namespace NexusForever.Game.Spell.Effect.Handler
     /// <remarks>
     /// The client makes a plain effect for this type (0x140718120), the bar comes from <see cref="ServerShowActionBar"/>: the client fills the bar from the ActionBarShortcutSet row and clears it for id 0 (0x1403B9920).
     /// When the effect goes the bar of the target's last other active ActionBarSet effect is shown again, or the bar is cleared.
-    /// TODO: which bar to use isn't known, dataBits02 may pick it. Every set goes on the <see cref="ShortcutSet.FloatingSpellBar"/>, the bar NexusForever shows the housing set on,
-    /// which leaves the player's own abilities alone if it is the wrong one. The associated unit is the caster (inferred), the turret or vehicle for the bars cast by one.
+    /// The bar is picked by dataBits02, see <see cref="ISpellEffectActionBarSetData.Bar"/>. The associated unit is the caster (inferred), the turret or vehicle for the bars cast by one.
     /// </remarks>
     [SpellEffectHandler(SpellEffectType.ActionBarSet)]
     public class SpellEffectActionBarSetHandler : SpellEffectCombatEffectHandler<ISpellEffectActionBarSetData>
@@ -32,7 +31,7 @@ namespace NexusForever.Game.Spell.Effect.Handler
             if (IsLasting(data))
                 base.Apply(executionContext, player, info, data);
 
-            SendActionBar(player, data.ShortcutSetId, executionContext.Spell.Caster.Guid);
+            SendActionBar(player, data.Bar, data.ShortcutSetId, executionContext.Spell.Caster.Guid);
             return SpellEffectExecutionResult.Ok;
         }
 
@@ -46,12 +45,13 @@ namespace NexusForever.Game.Spell.Effect.Handler
 
             base.Remove(spell, player, info, data);
 
-            ISpellTargetEffectInfo previous = player.CombatEffectManager.GetEffects(SpellEffectType.ActionBarSet).LastOrDefault();
-            ISpellEffectActionBarSetData previousData = player.CombatEffectManager.GetEffectData<ISpellEffectActionBarSetData>(SpellEffectType.ActionBarSet).LastOrDefault();
-            if (previous != null && previousData != null)
-                SendActionBar(player, previousData.ShortcutSetId, previous.Target.Collection.Spell.Caster.Guid);
+            // the last other effect for the same bar shows its set again, otherwise the bar is cleared
+            ISpellTargetEffectInfo previous = player.CombatEffectManager.GetEffects(SpellEffectType.ActionBarSet)
+                .LastOrDefault(e => GetBar(e.Entry) == data.Bar);
+            if (previous != null)
+                SendActionBar(player, data.Bar, previous.Entry.DataBits00, previous.Target.Collection.Spell.Caster.Guid);
             else
-                SendActionBar(player, 0u, 0u);
+                SendActionBar(player, data.Bar, 0u, 0u);
         }
 
         private static bool IsLasting(ISpellEffectActionBarSetData data)
@@ -59,11 +59,21 @@ namespace NexusForever.Game.Spell.Effect.Handler
             return data.Entry.DurationTime != 0u || data.Entry.Flags.HasFlag(SpellEffectFlags.CancelOnly);
         }
 
-        private static void SendActionBar(IPlayer player, uint shortcutSetId, uint associatedUnitId)
+        private static ShortcutSet GetBar(GameTable.Model.Spell4EffectsEntry entry)
+        {
+            return entry.DataBits02 switch
+            {
+                1u => ShortcutSet.FloatingSpellBar,
+                2u => ShortcutSet.FloatingDynamicSpellBar,
+                _  => ShortcutSet.VehicleBar
+            };
+        }
+
+        private static void SendActionBar(IPlayer player, ShortcutSet bar, uint shortcutSetId, uint associatedUnitId)
         {
             player.Session.EnqueueMessageEncrypted(new ServerShowActionBar
             {
-                ShortcutSet            = ShortcutSet.FloatingSpellBar,
+                ShortcutSet            = bar,
                 ActionBarShortcutSetId = (ushort)shortcutSetId,
                 AssociatedUnitId       = associatedUnitId
             });

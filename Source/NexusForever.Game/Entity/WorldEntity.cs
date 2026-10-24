@@ -128,6 +128,24 @@ namespace NexusForever.Game.Entity
             set => SetStat(Static.Entity.Stat.Shield, Math.Clamp(value, 0u, MaxShieldCapacity)); // TODO: Handle overshield
         }
 
+        /// <summary>
+        /// Damage the entity's Absorption effects have left to absorb, shown by the client's absorb bar.
+        /// </summary>
+        public uint Absorption
+        {
+            get => GetStatInteger(Static.Entity.Stat.Absorption) ?? 0u;
+            set => SetStat(Static.Entity.Stat.Absorption, value);
+        }
+
+        /// <summary>
+        /// Healing the entity's HealingAbsorption effects have left to absorb.
+        /// </summary>
+        public uint HealingAbsorption
+        {
+            get => GetStatInteger(Static.Entity.Stat.HealingAbsorption) ?? 0u;
+            set => SetStat(Static.Entity.Stat.HealingAbsorption, value);
+        }
+
         public uint MaxShieldCapacity
         {
             get => (uint)GetPropertyValue(Property.ShieldCapacityMax);

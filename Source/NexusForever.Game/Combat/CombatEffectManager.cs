@@ -79,6 +79,30 @@ namespace NexusForever.Game.Combat
         public void AddAbsorption(ISpellTargetEffectInfo info, ISpellEffectAbsorptionData data, uint amount)
         {
             AddEffect(info, data, amount);
+            UpdateAbsorptionStats();
+        }
+
+        /// <summary>
+        /// Send the amounts left to absorb to the client, the stats behind its absorb bars, unlimited absorbs aren't counted.
+        /// </summary>
+        private void UpdateAbsorptionStats()
+        {
+            uint Total(SpellEffectType type)
+            {
+                ulong total = 0ul;
+                foreach ((CombatEffect effect, ISpellEffectAbsorptionData _) in GetEffects<ISpellEffectAbsorptionData>(type))
+                    if (effect.Remaining != uint.MaxValue)
+                        total += effect.Remaining;
+                return (uint)Math.Min(total, uint.MaxValue - 1ul);
+            }
+
+            uint absorption = Total(SpellEffectType.Absorption);
+            if (owner.Absorption != absorption)
+                owner.Absorption = absorption;
+
+            uint healingAbsorption = Total(SpellEffectType.HealingAbsorption);
+            if (owner.HealingAbsorption != healingAbsorption)
+                owner.HealingAbsorption = healingAbsorption;
         }
 
         private void AddEffect(ISpellTargetEffectInfo info, ISpellEffectData data, uint remaining)
@@ -103,7 +127,9 @@ namespace NexusForever.Game.Combat
         /// </summary>
         public void RemoveEffect(ISpellTargetEffectInfo info)
         {
-            effects.RemoveAll(e => e.Info == info);
+            if (effects.RemoveAll(e => e.Info == info) > 0
+                && info.Entry.EffectType is SpellEffectType.Absorption or SpellEffectType.HealingAbsorption)
+                UpdateAbsorptionStats();
         }
 
         /// <summary>
@@ -169,6 +195,8 @@ namespace NexusForever.Game.Combat
                 absorbed += amount;
             }
 
+            if (absorbed > 0u)
+                UpdateAbsorptionStats();
             return absorbed;
         }
 
@@ -190,6 +218,8 @@ namespace NexusForever.Game.Combat
                 absorbed += amount;
             }
 
+            if (absorbed > 0u)
+                UpdateAbsorptionStats();
             return absorbed;
         }
 

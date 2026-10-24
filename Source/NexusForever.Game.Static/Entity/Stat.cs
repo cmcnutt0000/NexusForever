@@ -54,15 +54,17 @@
         Shield              = 20,
         [Stat(StatType.Integer)]
         InterruptArmour     = 21,
+        // remaining Absorption, the client keeps it at unit +0x4c and shows it as the absorb bar (0x1403D9A60, Lua Unit:GetAbsorptionValue)
         [Stat(StatType.Integer)]
-        Unknown22           = 22,
+        Absorption          = 22,
         [Stat(StatType.Float)]
         Unknown23           = 23,
         [Stat(StatType.Float)]
         Unknown24           = 24,
         [Stat(StatType.Float)]
         Unknown25           = 25,
+        // remaining HealingAbsorption, unit +0x50 in the client (0x1403D9A60, Lua Unit:GetHealingAbsorptionValue)
         [Stat(StatType.Integer)]
-        Unknown26           = 26
+        HealingAbsorption   = 26
     }
 }

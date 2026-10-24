@@ -48,6 +48,16 @@ namespace NexusForever.Game.Abstract.Entity
         uint Health { get; }
         uint MaxHealth { get; set; }
         uint Shield { get; set; }
+
+        /// <summary>
+        /// Damage the entity's Absorption effects have left to absorb, shown by the client's absorb bar.
+        /// </summary>
+        uint Absorption { get; set; }
+
+        /// <summary>
+        /// Healing the entity's HealingAbsorption effects have left to absorb.
+        /// </summary>
+        uint HealingAbsorption { get; set; }
         uint MaxShieldCapacity { get; set; }
 
         float Endurance { get; set; }

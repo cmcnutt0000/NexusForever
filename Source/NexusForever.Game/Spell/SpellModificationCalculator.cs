@@ -38,9 +38,6 @@ namespace NexusForever.Game.Spell
         /// <summary>
         /// Return a copy of the <see cref="Spell4EffectsEntry"/> changed by the modifications, the entry itself if nothing changes.
         /// </summary>
-        /// <remarks>
-        /// TODO: parameters 0 to 3 and 16 to 18 are fields of the client's effect copy the server doesn't know the names of.
-        /// </remarks>
         public static Spell4EffectsEntry ApplyToEffect(Spell4EffectsEntry entry, IReadOnlyCollection<Modification> modifications, SpellEffectTypeEntry effectType)
         {
             if (modifications.Count == 0)
@@ -54,6 +51,32 @@ namespace NexusForever.Game.Spell
 
                 switch (id)
                 {
+                    case (uint)SpellEffectModificationParameter.TargetFlags:
+                        copy.TargetFlags = (SpellEffectTargetFlags)ToUInt(Calculate(modifications, id, (uint)entry.TargetFlags, summed, sequential));
+                        break;
+                    case (uint)SpellEffectModificationParameter.DamageType:
+                    {
+                        // 9 rows set it, eg: Infuse Ammo sets 64 which isn't a damage type the server knows, those are left
+                        var damageType = (DamageType)ToUInt(Calculate(modifications, id, (uint)entry.DamageType, summed, sequential));
+                        if (Enum.IsDefined(damageType))
+                            copy.DamageType = damageType;
+                        break;
+                    }
+                    case (uint)SpellEffectModificationParameter.DelayTime:
+                        copy.DelayTime = ToUInt(Calculate(modifications, id, entry.DelayTime, summed, sequential));
+                        break;
+                    case (uint)SpellEffectModificationParameter.TickTime:
+                        copy.TickTime = ToUInt(Calculate(modifications, id, entry.TickTime, summed, sequential));
+                        break;
+                    case (uint)SpellEffectModificationParameter.InnateCostPerTick0:
+                        copy.InnateCostPerTick0 = ToUInt(Calculate(modifications, id, entry.InnateCostPerTick0, summed, sequential));
+                        break;
+                    case (uint)SpellEffectModificationParameter.InnateCostPerTick1:
+                        copy.InnateCostPerTick1 = ToUInt(Calculate(modifications, id, entry.InnateCostPerTick1, summed, sequential));
+                        break;
+                    case (uint)SpellEffectModificationParameter.ThreatMultiplier:
+                        copy.ThreatMultiplier = Calculate(modifications, id, entry.ThreatMultiplier, summed, sequential);
+                        break;
                     case (uint)SpellEffectModificationParameter.DurationTime:
                         copy.DurationTime = ToUInt(Calculate(modifications, id, entry.DurationTime, summed, sequential));
                         break;

@@ -13,7 +13,8 @@ namespace NexusForever.Game.Spell.Effect.Handler
 {
     /// <remarks>
     /// TODO: the damage changes with distance, DataBits02 (2, 3 and 4) is a DistanceDamageModifier id, a curve of 5 distance fractions and damage multipliers.
-    /// The client only caches the table (0x140560D90), what the distance is a fraction of isn't known.
+    /// The client caches the table (0x140560D90) but no damage code reads it, the damage effect class of 3, 8, 12, 33 and 138 is shared, so the curve was applied by the server only
+    /// and what its distance is a fraction of isn't known.
     /// </remarks>
     [SpellEffectHandler(SpellEffectType.DistanceDependentDamage)]
     public class SpellEffectDistanceDependentDamageHandler : SpellEffectDamageHandler

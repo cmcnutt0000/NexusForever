@@ -1,4 +1,6 @@
-﻿namespace NexusForever.Game.Abstract.Spell.Effect.Data
+﻿using NexusForever.Game.Static.Spell;
+
+namespace NexusForever.Game.Abstract.Spell.Effect.Data
 {
     public interface ISpellEffectActionBarSetData : ISpellEffectData
     {
@@ -8,6 +10,10 @@
         uint ShortcutSetId { get; }
 
         uint Unknown01 { get; }
-        uint Unknown02 { get; }
+
+        /// <summary>
+        /// Bar the set is shown on.
+        /// </summary>
+        ShortcutSet Bar { get; }
     }
 }
