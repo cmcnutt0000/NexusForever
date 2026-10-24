@@ -40,5 +40,17 @@ namespace NexusForever.Game.Achievement
         {
             CheckAchievements(target, GlobalAchievementManager.Instance.GetGuildAchievements(type), objectId, objectIdAlt, count);
         }
+
+        /// <summary>
+        /// Advance guild achievement with supplied id by count as <see cref="IPlayer"/>, its object ids aren't checked.
+        /// </summary>
+        public override void AdvanceAchievement(IPlayer target, ushort id, uint count = 1u)
+        {
+            IAchievementInfo info = GlobalAchievementManager.Instance.GetAchievement(id);
+            if (info == null || info.IsPlayerAchievement)
+                return;
+
+            AdvanceAchievement(target, info, count);
+        }
     }
 }

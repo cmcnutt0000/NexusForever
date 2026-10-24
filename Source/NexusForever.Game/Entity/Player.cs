@@ -1400,6 +1400,11 @@ namespace NexusForever.Game.Entity
             // only the player's base faction reads reputations and only for the exact faction, see 0x140787760 in the client
             if (!primary || Faction1 == Faction2)
             {
+                // a temporary override is read before the reputation, see 0x1403CAC00 in the client
+                float? reputationOverride = ReputationManager.GetReputationOverride(factionId);
+                if (reputationOverride != null)
+                    return FactionNode.GetDisposition(FactionNode.GetFactionLevel(reputationOverride.Value));
+
                 IReputation reputation = ReputationManager.GetReputation(factionId);
                 if (reputation != null)
                     return FactionNode.GetDisposition(FactionNode.GetFactionLevel(reputation.Amount));

@@ -13,6 +13,7 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddSingleton<IGlobalSpellEffectManager, GlobalSpellEffectManager>();
 
             sc.AddTransient<ISpellEffectAbsorptionData, SpellEffectAbsorptionData>();
+            sc.AddTransient<ISpellEffectAchievementAdvanceData, SpellEffectAchievementAdvanceData>();
             sc.AddTransient<ISpellEffectCCStateBreakData, SpellEffectCCStateBreakData>();
             sc.AddTransient<ISpellEffectCCStateSetData, SpellEffectCCStateSetData>();
             sc.AddTransient<ISpellEffectClampVitalData, SpellEffectClampVitalData>();
@@ -23,12 +24,27 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectFactionSetData, SpellEffectFactionSetData>();
             sc.AddTransient<ISpellEffectForcedActionData, SpellEffectForcedActionData>();
             sc.AddTransient<ISpellEffectForcedMoveData, SpellEffectForcedMoveData>();
+            sc.AddTransient<ISpellEffectGiveAbilityPointsToPlayerData, SpellEffectGiveAbilityPointsToPlayerData>();
+            sc.AddTransient<ISpellEffectGiveAugmentPowerToPlayerData, SpellEffectGiveAugmentPowerToPlayerData>();
+            sc.AddTransient<ISpellEffectGiveItemToPlayerData, SpellEffectGiveItemToPlayerData>();
+            sc.AddTransient<ISpellEffectGiveSchematicData, SpellEffectGiveSchematicData>();
+            sc.AddTransient<ISpellEffectGrantLevelScaledData, SpellEffectGrantLevelScaledData>();
+            sc.AddTransient<ISpellEffectGrantXpData, SpellEffectGrantXpData>();
             sc.AddTransient<ISpellEffectLearnDyeColourData, SpellEffectLearnDyeColourData>();
+            sc.AddTransient<ISpellEffectLootTableData, SpellEffectLootTableData>();
             sc.AddTransient<ISpellEffectModifyInterruptArmourData, SpellEffectModifyInterruptArmourData>();
+            sc.AddTransient<ISpellEffectModifyRestedXpData, SpellEffectModifyRestedXpData>();
             sc.AddTransient<ISpellEffectNpcForceFacingData, SpellEffectNpcForceFacingData>();
+            sc.AddTransient<ISpellEffectPathMissionIncrementData, SpellEffectPathMissionIncrementData>();
+            sc.AddTransient<ISpellEffectPathXpModifyData, SpellEffectPathXpModifyData>();
             sc.AddTransient<ISpellEffectPersonalModifierData, SpellEffectPersonalModifierData>();
             sc.AddTransient<ISpellEffectProcData, SpellEffectProcData>();
             sc.AddTransient<ISpellEffectProxyData, SpellEffectProxyData>();
+            sc.AddTransient<ISpellEffectQuestAdvanceObjectiveData, SpellEffectQuestAdvanceObjectiveData>();
+            sc.AddTransient<ISpellEffectReputationModifyData, SpellEffectReputationModifyData>();
+            sc.AddTransient<ISpellEffectRestedXpDecorBonusData, SpellEffectRestedXpDecorBonusData>();
+            sc.AddTransient<ISpellEffectRewardBuffModifierData, SpellEffectRewardBuffModifierData>();
+            sc.AddTransient<ISpellEffectRewardPropertyModifierData, SpellEffectRewardPropertyModifierData>();
             sc.AddTransient<ISpellEffectSapVitalData, SpellEffectSapVitalData>();
             sc.AddTransient<ISpellEffectSpellDispelData, SpellEffectSpellDispelData>();
             sc.AddTransient<ISpellEffectSpellEffectImmunityData, SpellEffectSpellEffectImmunityData>();
@@ -39,12 +55,17 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectTeleportData, SpellEffectTeleportData>();
             sc.AddTransient<ISpellEffectThreatModificationData, SpellEffectThreatModificationData>();
             sc.AddTransient<ISpellEffectTitleGrantData, SpellEffectTitleGrantData>();
+            sc.AddTransient<ISpellEffectTitleRevokeData, SpellEffectTitleRevokeData>();
+            sc.AddTransient<ISpellEffectTradeSkillProfessionData, SpellEffectTradeSkillProfessionData>();
             sc.AddTransient<ISpellEffectTransferenceData, SpellEffectTransferenceData>();
             sc.AddTransient<ISpellEffectUnitPropertyModifierData, SpellEffectUnitPropertyModifierData>();
             sc.AddTransient<ISpellEffectUnitStateSetData, SpellEffectUnitStateSetData>();
+            sc.AddTransient<ISpellEffectUnlockInlaidAugmentData, SpellEffectUnlockInlaidAugmentData>();
             sc.AddTransient<ISpellEffectUnlockMountData, SpellEffectUnlockMountData>();
             sc.AddTransient<ISpellEffectUnlockPetFlairData, SpellEffectUnlockPetFlairData>();
             sc.AddTransient<ISpellEffectUnlockVanityPetData, SpellEffectUnlockVanityPetData>();
+            sc.AddTransient<ISpellEffectVacuumLootData, SpellEffectVacuumLootData>();
+            sc.AddTransient<ISpellEffectVendorPriceModifierData, SpellEffectVendorPriceModifierData>();
             sc.AddTransient<ISpellEffectVitalModifierData, SpellEffectVitalModifierData>();
 
             foreach (System.Type type in Assembly.GetExecutingAssembly().GetTypes())

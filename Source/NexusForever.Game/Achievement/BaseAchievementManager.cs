@@ -139,6 +139,41 @@ namespace NexusForever.Game.Achievement
         }
 
         /// <summary>
+        /// Advance achievement with supplied id by count as <see cref="IPlayer"/>, its object ids aren't checked.
+        /// </summary>
+        public abstract void AdvanceAchievement(IPlayer target, ushort id, uint count = 1u);
+
+        /// <summary>
+        /// Advance <see cref="IAchievementInfo"/> by count as <see cref="IPlayer"/> sending the result to the client.
+        /// </summary>
+        /// <remarks>
+        /// Checklist achievements progress per entry, which an advance doesn't name.
+        /// </remarks>
+        protected void AdvanceAchievement(IPlayer target, IAchievementInfo info, uint count)
+        {
+            if (HasCompletedAchievement(info.Id))
+                return;
+
+            if (DisableManager.Instance.IsDisabled(DisableType.Achievement, info.Id))
+                return;
+
+            if (info.ChecklistEntries.Count != 0)
+                return;
+
+            if (!MeetsPrerequisites(target, info.Entry))
+                return;
+
+            // an achievement is complete when its progress equals the value, see Achievement.IsComplete
+            IAchievement achievement = GetAchievement(info.Id);
+            achievement.Data0 = Math.Min(achievement.Data0 + count, info.Entry.Value);
+
+            if (achievement.IsComplete())
+                CompleteAchievement(achievement);
+
+            SendAchievementUpdate(achievement);
+        }
+
+        /// <summary>
         /// Update or complete <see cref="AchievementInfo"/> as <see cref="IPlayer"/> with supplied object ids.
         /// </summary>
         private bool CheckAchievement(IPlayer target, IAchievementInfo info, uint objectId, uint objectIdAlt, uint count)
@@ -185,11 +220,7 @@ namespace NexusForever.Game.Achievement
         /// </summary>
         private bool CanUpdateAchievement(IPlayer player, AchievementEntry entry, uint objectId, uint objectIdAlt)
         {
-            // TODO: should the server also check PrerequisiteId?
-            if (entry.PrerequisiteIdServer != 0u && !PrerequisiteManager.Instance.Meets(player, entry.PrerequisiteIdServer))
-                return false;
-            
-            if (entry.PrerequisiteId != 0u && !PrerequisiteManager.Instance.Meets(player, entry.PrerequisiteId))
+            if (!MeetsPrerequisites(player, entry))
                 return false;
 
             // TODO: research PrerequisiteIdObjective and PrerequisiteIdObjectiveAlt
@@ -197,6 +228,21 @@ namespace NexusForever.Game.Achievement
             if (entry.ObjectId != 0u && entry.ObjectId != objectId)
                 return false;
             if (entry.ObjectIdAlt != 0u && entry.ObjectIdAlt != objectIdAlt)
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Check if <see cref="IPlayer"/> meets the prerequisites of <see cref="AchievementEntry"/>.
+        /// </summary>
+        private bool MeetsPrerequisites(IPlayer player, AchievementEntry entry)
+        {
+            // TODO: should the server also check PrerequisiteId?
+            if (entry.PrerequisiteIdServer != 0u && !PrerequisiteManager.Instance.Meets(player, entry.PrerequisiteIdServer))
+                return false;
+
+            if (entry.PrerequisiteId != 0u && !PrerequisiteManager.Instance.Meets(player, entry.PrerequisiteId))
                 return false;
 
             return true;
