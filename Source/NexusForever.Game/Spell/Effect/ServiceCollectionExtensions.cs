@@ -21,9 +21,11 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectFactionSetData, SpellEffectFactionSetData>();
             sc.AddTransient<ISpellEffectForcedMoveData, SpellEffectForcedMoveData>();
             sc.AddTransient<ISpellEffectGiveItemToPlayerData, SpellEffectGiveItemToPlayerData>();
+            sc.AddTransient<ISpellEffectGiveSchematicData, SpellEffectGiveSchematicData>();
             sc.AddTransient<ISpellEffectGrantLevelScaledData, SpellEffectGrantLevelScaledData>();
             sc.AddTransient<ISpellEffectGrantXpData, SpellEffectGrantXpData>();
             sc.AddTransient<ISpellEffectLearnDyeColourData, SpellEffectLearnDyeColourData>();
+            sc.AddTransient<ISpellEffectLootTableData, SpellEffectLootTableData>();
             sc.AddTransient<ISpellEffectModifyInterruptArmourData, SpellEffectModifyInterruptArmourData>();
             sc.AddTransient<ISpellEffectModifyRestedXpData, SpellEffectModifyRestedXpData>();
             sc.AddTransient<ISpellEffectPathMissionIncrementData, SpellEffectPathMissionIncrementData>();
@@ -41,10 +43,12 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectTeleportData, SpellEffectTeleportData>();
             sc.AddTransient<ISpellEffectTitleGrantData, SpellEffectTitleGrantData>();
             sc.AddTransient<ISpellEffectTitleRevokeData, SpellEffectTitleRevokeData>();
+            sc.AddTransient<ISpellEffectTradeSkillProfessionData, SpellEffectTradeSkillProfessionData>();
             sc.AddTransient<ISpellEffectUnitPropertyModifierData, SpellEffectUnitPropertyModifierData>();
             sc.AddTransient<ISpellEffectUnlockMountData, SpellEffectUnlockMountData>();
             sc.AddTransient<ISpellEffectUnlockPetFlairData, SpellEffectUnlockPetFlairData>();
             sc.AddTransient<ISpellEffectUnlockVanityPetData, SpellEffectUnlockVanityPetData>();
+            sc.AddTransient<ISpellEffectVacuumLootData, SpellEffectVacuumLootData>();
             sc.AddTransient<ISpellEffectVendorPriceModifierData, SpellEffectVendorPriceModifierData>();
             sc.AddTransient<ISpellEffectVitalModifierData, SpellEffectVitalModifierData>();
 
