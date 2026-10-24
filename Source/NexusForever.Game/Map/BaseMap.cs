@@ -606,6 +606,14 @@ namespace NexusForever.Game.Map
         }
 
         /// <summary>
+        /// Invoke <see cref="Action{T}"/> against <see cref="IBaseMap"/> script collection.
+        /// </summary>
+        public void InvokeScriptCollection<T>(Action<T> action)
+        {
+            scriptCollection?.Invoke(action);
+        }
+
+        /// <summary>
         /// Return a string containing debug information about the map.
         /// </summary>
         public virtual string WriteDebugInformation()

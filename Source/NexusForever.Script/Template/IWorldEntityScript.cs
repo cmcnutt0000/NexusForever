@@ -48,5 +48,12 @@ namespace NexusForever.Script.Template
         void OnUnsummon(IWorldEntity summoned)
         {
         }
+
+        /// <summary>
+        /// Invoked when <see cref="IWorldEntity"/> receives a ravel signal from <see cref="IUnitEntity"/>.
+        /// </summary>
+        void OnRavelSignal(IUnitEntity source, uint signalId, int value)
+        {
+        }
     }
 }

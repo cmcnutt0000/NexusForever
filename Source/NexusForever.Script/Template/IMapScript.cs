@@ -1,5 +1,6 @@
 ﻿using NexusForever.Game.Abstract.Entity;
 using NexusForever.Game.Abstract.PublicEvent;
+using NexusForever.Game.Static.Spell.Effect;
 using NexusForever.Shared;
 
 namespace NexusForever.Script.Template
@@ -34,6 +35,13 @@ namespace NexusForever.Script.Template
         /// <see cref="IPublicEventTeam"/> can be null if the public event was a draw.
         /// </remarks>
         void OnPublicEventFinish(IPublicEvent publicEvent, IPublicEventTeam publicEventTeam)
+        {
+        }
+
+        /// <summary>
+        /// Invoked when <see cref="IUnitEntity"/> sends a ravel signal with a target on the map.
+        /// </summary>
+        void OnRavelSignal(IUnitEntity source, IUnitEntity target, SpellEffectRavelSignalScope scope, uint signalId, int value)
         {
         }
     }

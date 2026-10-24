@@ -130,6 +130,14 @@ namespace NexusForever.Game.Spell
         }
 
         /// <summary>
+        /// Invoke <see cref="Action{T}"/> against <see cref="ISpell"/> script collection.
+        /// </summary>
+        public void InvokeScriptCollection<T>(Action<T> action)
+        {
+            scriptCollection?.Invoke(action);
+        }
+
+        /// <summary>
         /// Invoked each world tick with the delta since the previous tick occurred.
         /// </summary>
         public virtual void Update(double lastTick)

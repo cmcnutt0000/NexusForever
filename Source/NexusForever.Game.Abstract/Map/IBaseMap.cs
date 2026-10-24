@@ -102,5 +102,10 @@ namespace NexusForever.Game.Abstract.Map
         /// Invoked when <see cref="IPublicEvent"/> finishes with the winning <see cref="IPublicEventTeam"/>.
         /// </summary>
         void OnPublicEventFinish(IPublicEvent publicEvent, IPublicEventTeam publicEventTeam);
+
+        /// <summary>
+        /// Invoke <see cref="Action{T}"/> against <see cref="IBaseMap"/> script collection.
+        /// </summary>
+        void InvokeScriptCollection<T>(Action<T> action);
     }
 }

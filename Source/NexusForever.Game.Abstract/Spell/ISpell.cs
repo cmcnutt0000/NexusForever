@@ -38,6 +38,11 @@ namespace NexusForever.Game.Abstract.Spell
         ISpellTargetInfo GetTarget(IUnitEntity entity);
 
         /// <summary>
+        /// Invoke <see cref="Action{T}"/> against <see cref="ISpell"/> script collection.
+        /// </summary>
+        void InvokeScriptCollection<T>(Action<T> action);
+
+        /// <summary>
         /// Begin cast, checking prerequisites before initiating.
         /// </summary>
         bool Cast();
