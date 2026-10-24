@@ -18,6 +18,7 @@ using NexusForever.Game.Static;
 using NexusForever.Game.Static.Entity;
 using NexusForever.Game.Static.Spell;
 using NexusForever.Game.Static.Spell.Effect;
+using NexusForever.GameTable;
 using NexusForever.GameTable.Model;
 using NexusForever.Network.World.Combat;
 using NexusForever.Network.World.Entity;
@@ -463,10 +464,43 @@ namespace NexusForever.Game.Spell
             var executionContext = new SpellExecutionContext();
             executionContext.Initialise(this);
 
-            foreach (Spell4EffectsEntry entry in Parameters.SpellInfo.Effects)
+            foreach (Spell4EffectsEntry entry in GetSpellEffects())
                 executionContext.AddSpellEffect(entry);
 
             Execute(executionContext);
+        }
+
+        /// <summary>
+        /// Return the effects of the spell, changed by the caster's AddSpellEffect and SuppressSpellEffect effects.
+        /// </summary>
+        private IEnumerable<Spell4EffectsEntry> GetSpellEffects()
+        {
+            bool AppliesTo(uint spell4BaseId, uint spellGroupId)
+            {
+                return spell4BaseId != 0u
+                    ? spell4BaseId == Parameters.SpellInfo.BaseInfo.Entry.Id
+                    : spellGroupId != 0u && Parameters.SpellInfo.SpellGroups.Contains(spellGroupId);
+            }
+
+            HashSet<uint> suppressed = Caster.CombatEffectManager
+                .GetEffectData<ISpellEffectSuppressSpellEffectData>(SpellEffectType.SuppressSpellEffect)
+                .Where(d => AppliesTo(d.Spell4BaseId, d.SpellGroupId))
+                .Select(d => d.Spell4EffectsId)
+                .ToHashSet();
+
+            foreach (Spell4EffectsEntry entry in Parameters.SpellInfo.Effects)
+                if (!suppressed.Contains(entry.Id))
+                    yield return entry;
+
+            foreach (ISpellEffectAddSpellEffectData data in Caster.CombatEffectManager.GetEffectData<ISpellEffectAddSpellEffectData>(SpellEffectType.AddSpellEffect))
+            {
+                if (!AppliesTo(data.Spell4BaseId, data.SpellGroupId) || suppressed.Contains(data.Spell4EffectsId))
+                    continue;
+
+                Spell4EffectsEntry entry = GameTableManager.Instance.Spell4Effects.GetEntry(data.Spell4EffectsId);
+                if (entry != null)
+                    yield return entry;
+            }
         }
 
         protected void Execute(ISpellExecutionContext executionContext)
