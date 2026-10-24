@@ -4,6 +4,7 @@ using NexusForever.Database.Character;
 using NexusForever.Database.Character.Model;
 using NexusForever.Game.Abstract.Entity;
 using NexusForever.Game.Abstract.Spell;
+using NexusForever.Game.Abstract.Spell.Effect.Data;
 using NexusForever.Game.Abstract.Spell.Info;
 using NexusForever.Game.Prerequisite;
 using NexusForever.Game.Static.Spell;
@@ -47,7 +48,11 @@ namespace NexusForever.Game.Spell
         private byte tier;
 
         public uint AbilityCharges { get; private set; }
-        public uint MaxAbilityCharges => SpellInfo.Entry.AbilityChargeCount;
+        // ModifyAbilityCharges effects raise the maximum while they are active, see 0x1405A71B0 in the client
+        public uint MaxAbilityCharges => (uint)Math.Max(0, (int)SpellInfo.Entry.AbilityChargeCount + Owner.CombatEffectManager
+            .GetEffectData<ISpellEffectModifyAbilityChargesData>(SpellEffectType.ModifyAbilityCharges)
+            .Where(d => d.MaximumCharges && d.Spell4BaseId == BaseInfo.Entry.Id)
+            .Sum(d => d.Charges));
 
         private UnlockedSpellSaveMask saveMask;
 
@@ -110,7 +115,7 @@ namespace NexusForever.Game.Spell
 
         public void Update(double lastTick)
         {
-            if (MaxAbilityCharges > 0 && rechargeTimer.IsTicking)
+            if (MaxAbilityCharges > 0 && rechargeTimer?.IsTicking == true)
             {
                 rechargeTimer.Update(lastTick);
                 if (rechargeTimer.HasElapsed)
@@ -237,8 +242,24 @@ namespace NexusForever.Game.Spell
 
             // TODO: Ability Charges are affected by ModifyCooldown spell effect. Needs to be handled to adjust Charge timer. Possibly move charges to SpellManager.
             AbilityCharges -= 1;
+            rechargeTimer ??= new(SpellInfo.Entry.AbilityRechargeTime / 1000d, false);
             if (!rechargeTimer.IsTicking)
                 rechargeTimer.Reset(true);
+            SendChargeUpdate();
+        }
+
+        /// <summary>
+        /// Give back the supplied number of charges, the charges are kept within the maximum.
+        /// </summary>
+        public void AddAbilityCharges(int count)
+        {
+            uint charges = (uint)Math.Clamp((long)AbilityCharges + count, 0L, MaxAbilityCharges);
+            if (charges == AbilityCharges)
+                return;
+
+            AbilityCharges = charges;
+            if (AbilityCharges >= MaxAbilityCharges)
+                rechargeTimer?.Reset(false);
             SendChargeUpdate();
         }
 

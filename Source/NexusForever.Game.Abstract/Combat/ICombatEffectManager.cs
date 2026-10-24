@@ -40,6 +40,11 @@ namespace NexusForever.Game.Abstract.Combat
         IEnumerable<ISpellTargetEffectInfo> GetEffects(SpellEffectType type);
 
         /// <summary>
+        /// Return the <see cref="ISpellEffectData"/> of the active effects of the supplied <see cref="SpellEffectType"/>.
+        /// </summary>
+        IEnumerable<T> GetEffectData<T>(SpellEffectType type) where T : ISpellEffectData;
+
+        /// <summary>
         /// Return the amount of damage of the supplied <see cref="DamageType"/> absorbed by Absorption effects, the absorbed amount is used up.
         /// </summary>
         uint AbsorbDamage(DamageType damageType, uint damage);

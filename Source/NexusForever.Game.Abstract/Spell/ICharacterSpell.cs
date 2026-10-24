@@ -33,5 +33,10 @@ namespace NexusForever.Game.Abstract.Spell
         void Cast(bool buttonPressed);
 
         void UseCharge();
+
+        /// <summary>
+        /// Give back the supplied number of charges, the charges are kept within the maximum.
+        /// </summary>
+        void AddAbilityCharges(int count);
     }
 }

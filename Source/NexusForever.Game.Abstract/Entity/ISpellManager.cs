@@ -78,6 +78,11 @@ namespace NexusForever.Game.Abstract.Entity
         /// </summary>
         void SetSpellCooldownByBaseSpell(uint spell4BaseId, uint type, double cooldown);
 
+        /// <summary>
+        /// Change the remaining cooldown, in milliseconds, of every spell on cooldown that matches the predicate.
+        /// </summary>
+        void UpdateSpellCooldowns(Func<ISpellInfo, bool> predicate, Func<double, double> update);
+
         void ResetAllSpellCooldowns();
         double GetGlobalSpellCooldown(uint globalEnum);
         void SetGlobalSpellCooldown(uint globalEnum, double cooldown);

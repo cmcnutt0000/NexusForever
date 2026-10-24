@@ -126,6 +126,16 @@ namespace NexusForever.Game.Combat
                 .ToList();
         }
 
+        /// <summary>
+        /// Return the <see cref="ISpellEffectData"/> of the active effects of the supplied <see cref="SpellEffectType"/>.
+        /// </summary>
+        public IEnumerable<T> GetEffectData<T>(SpellEffectType type) where T : ISpellEffectData
+        {
+            return GetEffects<T>(type)
+                .Select(e => e.Data)
+                .ToList();
+        }
+
         private IEnumerable<(CombatEffect Effect, T Data)> GetEffects<T>(SpellEffectType type) where T : ISpellEffectData
         {
             foreach (CombatEffect effect in effects)

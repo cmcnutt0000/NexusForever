@@ -14,6 +14,8 @@ namespace NexusForever.Game.Spell.Effect
 
             sc.AddTransient<ISpellEffectAbsorptionData, SpellEffectAbsorptionData>();
             sc.AddTransient<ISpellEffectAchievementAdvanceData, SpellEffectAchievementAdvanceData>();
+            sc.AddTransient<ISpellEffectActivateSpellCooldownData, SpellEffectActivateSpellCooldownData>();
+            sc.AddTransient<ISpellEffectAddSpellData, SpellEffectAddSpellData>();
             sc.AddTransient<ISpellEffectCCStateBreakData, SpellEffectCCStateBreakData>();
             sc.AddTransient<ISpellEffectCCStateSetData, SpellEffectCCStateSetData>();
             sc.AddTransient<ISpellEffectClampVitalData, SpellEffectClampVitalData>();
@@ -32,8 +34,10 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectGrantXpData, SpellEffectGrantXpData>();
             sc.AddTransient<ISpellEffectLearnDyeColourData, SpellEffectLearnDyeColourData>();
             sc.AddTransient<ISpellEffectLootTableData, SpellEffectLootTableData>();
+            sc.AddTransient<ISpellEffectModifyAbilityChargesData, SpellEffectModifyAbilityChargesData>();
             sc.AddTransient<ISpellEffectModifyInterruptArmourData, SpellEffectModifyInterruptArmourData>();
             sc.AddTransient<ISpellEffectModifyRestedXpData, SpellEffectModifyRestedXpData>();
+            sc.AddTransient<ISpellEffectModifySpellCooldownData, SpellEffectModifySpellCooldownData>();
             sc.AddTransient<ISpellEffectNpcForceFacingData, SpellEffectNpcForceFacingData>();
             sc.AddTransient<ISpellEffectPathMissionIncrementData, SpellEffectPathMissionIncrementData>();
             sc.AddTransient<ISpellEffectPathXpModifyData, SpellEffectPathXpModifyData>();

@@ -487,6 +487,27 @@ namespace NexusForever.Game.Entity
             }
         }
 
+        /// <summary>
+        /// Change the remaining cooldown, in milliseconds, of every spell on cooldown that matches the predicate.
+        /// </summary>
+        public void UpdateSpellCooldowns(Func<ISpellInfo, bool> predicate, Func<double, double> update)
+        {
+            foreach ((uint spell4Id, double cooldown) in spellCooldowns.ToArray())
+            {
+                if (cooldown <= 0d)
+                    continue;
+
+                Spell4Entry entry = GameTableManager.Instance.Spell4.GetEntry(spell4Id);
+                ISpellInfo spellInfo = entry != null
+                    ? LegacyServiceProvider.Provider.GetService<ISpellInfoManager>().GetSpellBaseInfo(entry.Spell4BaseIdBaseSpell)?.GetSpellInfo((byte)entry.TierIndex)
+                    : null;
+                if (spellInfo == null || !predicate(spellInfo))
+                    continue;
+
+                SetSpellCooldown(spellInfo, Math.Max(0d, update(cooldown * 1000d)) / 1000d, true);
+            }
+        }
+
         public void ResetAllSpellCooldowns()
         {
             foreach (uint spell4Id in spellCooldowns.Keys.ToList())

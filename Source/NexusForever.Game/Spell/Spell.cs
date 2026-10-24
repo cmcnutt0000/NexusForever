@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using NexusForever.Game.Abstract;
 using NexusForever.Game.Abstract.Entity;
 using NexusForever.Game.Abstract.Spell;
+using NexusForever.Game.Abstract.Spell.Effect.Data;
 using NexusForever.Game.Abstract.Spell.Event;
 using NexusForever.Game.Abstract.Spell.Target;
 using NexusForever.Game.Abstract.Spell.Target.Implicit;
@@ -226,11 +227,11 @@ namespace NexusForever.Game.Spell
                 return false;
 
             // only global cooldown enums 0 and 1 start the global cooldown, see 0x14046AFC0 in the client
-            // TODO: the client stores it against the SpellCoolDown row rather than the enum and applies the unit's cooldown modifiers (0x14046A760)
+            // TODO: the client stores it against the SpellCoolDown row rather than the enum
             if (Caster is IPlayer player)
             {
                 if (Parameters.SpellInfo.GlobalCooldown != null && Parameters.SpellInfo.Entry.GlobalCooldownEnum < 2u && !Parameters.IsProxy)
-                    player.SpellManager.SetGlobalSpellCooldown(Parameters.SpellInfo.Entry.GlobalCooldownEnum, Parameters.SpellInfo.GlobalCooldown.CooldownTime / 1000d);
+                    player.SpellManager.SetGlobalSpellCooldown(Parameters.SpellInfo.Entry.GlobalCooldownEnum, GetGlobalCooldown(player) / 1000d);
                 else if (Parameters.IsProxy)
                     player.SpellManager.SetSpellCooldown(Parameters.SpellInfo, Parameters.CooldownOverride / 1000d);
             }
@@ -491,6 +492,19 @@ namespace NexusForever.Game.Spell
 
             foreach (IProxy proxy in executionContext.GetProxies())
                 proxy.Cast(Caster, events);
+        }
+
+        /// <summary>
+        /// Return the global cooldown in milliseconds changed by the caster's ModifySpellCooldown effects for its SpellCoolDown id, see 0x14046A760 in the client.
+        /// </summary>
+        private double GetGlobalCooldown(IPlayer player)
+        {
+            double cooldown = Parameters.SpellInfo.GlobalCooldown.CooldownTime;
+            foreach (ISpellEffectModifySpellCooldownData modifier in player.CombatEffectManager.GetEffectData<ISpellEffectModifySpellCooldownData>(SpellEffectType.ModifySpellCooldown))
+                if (modifier.Type == SpellCooldownModifierType.Cooldown && modifier.Id == Parameters.SpellInfo.GlobalCooldown.Id)
+                    cooldown = modifier.Apply(cooldown);
+
+            return Math.Max(0d, cooldown);
         }
 
         protected void SetCooldown()
