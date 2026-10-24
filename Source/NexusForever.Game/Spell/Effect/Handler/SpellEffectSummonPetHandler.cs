@@ -60,7 +60,7 @@ namespace NexusForever.Game.Spell.Effect.Handler
         public void Remove(ISpell spell, IUnitEntity target, ISpellTargetEffectInfo info, ISpellEffectSummonPetData data)
         {
             // every pet effect has a duration (75) or lasts until the spell is cancelled (77, the engineer bots)
-            if (info.GetDuration() == TimeSpan.Zero)
+            if (data.Entry.DurationTime == 0u && !data.Entry.Flags.HasFlag(SpellEffectFlags.CancelOnly))
                 return;
 
             // TODO: pets are matched by creature id, the end of one cast also removes the pets of a later one

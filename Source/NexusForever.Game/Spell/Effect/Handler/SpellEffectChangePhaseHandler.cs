@@ -37,7 +37,7 @@ namespace NexusForever.Game.Spell.Effect.Handler
         public void Remove(ISpell spell, IUnitEntity target, ISpellTargetEffectInfo info, ISpellEffectChangePhaseData data)
         {
             // 85 effects change the phases for good (the portals in and out of the flux), the other 76 last for a duration or until the spell ends
-            if (info.GetDuration() == TimeSpan.Zero)
+            if (data.Entry.DurationTime == 0u && !data.Entry.Flags.HasFlag(SpellEffectFlags.CancelOnly))
                 return;
 
             if (target is not IPlayer player)

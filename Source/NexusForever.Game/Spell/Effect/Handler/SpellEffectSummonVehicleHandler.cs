@@ -63,7 +63,7 @@ namespace NexusForever.Game.Spell.Effect.Handler
         public void Remove(ISpell spell, IUnitEntity target, ISpellTargetEffectInfo info, ISpellEffectSummonVehicleData data)
         {
             // 10 effects last until the spell is cancelled, the vehicles of the other 2 stay until the pilot gets out
-            if (info.GetDuration() == TimeSpan.Zero)
+            if (data.Entry.DurationTime == 0u && !data.Entry.Flags.HasFlag(SpellEffectFlags.CancelOnly))
                 return;
 
             if (target is not IPlayer player || player.PlatformGuid == null)

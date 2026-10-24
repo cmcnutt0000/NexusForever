@@ -67,7 +67,7 @@ namespace NexusForever.Game.Spell.Effect.Handler
         public void Remove(ISpell spell, IUnitEntity target, ISpellTargetEffectInfo info, ISpellEffectSummonCreatureData data)
         {
             // 113 effects have no duration, their summons stay until they die or the summoner leaves the map
-            if (info.GetDuration() == TimeSpan.Zero)
+            if (data.Entry.DurationTime == 0u && !data.Entry.Flags.HasFlag(SpellEffectFlags.CancelOnly))
                 return;
 
             // TODO: summons are matched by creature id, the end of one cast also removes the summons of a later one
