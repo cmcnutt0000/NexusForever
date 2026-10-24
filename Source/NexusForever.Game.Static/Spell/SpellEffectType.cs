@@ -5,6 +5,7 @@ namespace NexusForever.Game.Static.Spell
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum SpellEffectType
     {
+        Unknown0                  = 0x0000, // no SpellEffectType row, the 18 rows of the VIP Bonus spells
         VitalModifier             = 0x0001,
         SpellCounter              = 0x0002,
         ForcedMove                = 0x0003,

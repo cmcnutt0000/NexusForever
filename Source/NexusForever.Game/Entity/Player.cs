@@ -1581,6 +1581,10 @@ namespace NexusForever.Game.Entity
             {
                 if (player.PvPFlags == PvPFlag.Disabled)
                     return false;
+
+                // a TemporarilyUnflagPvp effect leaves the flags but the player isn't flagged while it is active
+                if (player.CombatEffectManager.HasEffect(SpellEffectType.TemporarilyUnflagPvp))
+                    return false;
             }
 
             return base.CanAttack(target);

@@ -10,6 +10,7 @@ using NexusForever.Game.Abstract.Spell.Target;
 using NexusForever.Game.Combat;
 using NexusForever.Game.Combat.CrowdControl;
 using NexusForever.Game.Spell;
+using NexusForever.Game.Spell.Effect;
 using NexusForever.Game.Static;
 using NexusForever.Game.Static.Entity;
 using NexusForever.Game.Static.PublicEvent;
@@ -182,7 +183,18 @@ namespace NexusForever.Game.Entity
             // TODO
             // entityCreate.CurrentSpellUniqueId
 
+            // appearance changes of active MimicDisguise, DisguiseOutfit and ItemVisualSwap effects
+            SpellEffectVisualOverlay.Apply(this, entityCreate);
+
             return entityCreate;
+        }
+
+        protected override ServerEntityVisualUpdate BuildVisualUpdate()
+        {
+            ServerEntityVisualUpdate update = base.BuildVisualUpdate();
+            // appearance changes of active MimicDisguise, DisguiseOutfit and ItemVisualSwap effects
+            SpellEffectVisualOverlay.Apply(this, update);
+            return update;
         }
 
         /// <summary>
