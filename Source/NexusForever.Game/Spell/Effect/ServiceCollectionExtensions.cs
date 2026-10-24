@@ -33,6 +33,8 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectQuestAdvanceObjectiveData, SpellEffectQuestAdvanceObjectiveData>();
             sc.AddTransient<ISpellEffectReputationModifyData, SpellEffectReputationModifyData>();
             sc.AddTransient<ISpellEffectRestedXpDecorBonusData, SpellEffectRestedXpDecorBonusData>();
+            sc.AddTransient<ISpellEffectRewardBuffModifierData, SpellEffectRewardBuffModifierData>();
+            sc.AddTransient<ISpellEffectRewardPropertyModifierData, SpellEffectRewardPropertyModifierData>();
             sc.AddTransient<ISpellEffectSpellForceRemoveData, SpellEffectSpellForceRemoveData>();
             sc.AddTransient<ISpellEffectSummonMountData, SpellEffectSummonMountData>();
             sc.AddTransient<ISpellEffectSummonVanityPetData, SpellEffectSummonVanityPetData>();
@@ -43,6 +45,7 @@ namespace NexusForever.Game.Spell.Effect
             sc.AddTransient<ISpellEffectUnlockMountData, SpellEffectUnlockMountData>();
             sc.AddTransient<ISpellEffectUnlockPetFlairData, SpellEffectUnlockPetFlairData>();
             sc.AddTransient<ISpellEffectUnlockVanityPetData, SpellEffectUnlockVanityPetData>();
+            sc.AddTransient<ISpellEffectVendorPriceModifierData, SpellEffectVendorPriceModifierData>();
             sc.AddTransient<ISpellEffectVitalModifierData, SpellEffectVitalModifierData>();
 
             foreach (System.Type type in Assembly.GetExecutingAssembly().GetTypes())
