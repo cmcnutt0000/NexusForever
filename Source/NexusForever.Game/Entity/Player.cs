@@ -390,6 +390,7 @@ namespace NexusForever.Game.Entity
             PathManager             = new PathManager(this, model);
             TitleManager            = new TitleManager(this, model);
             SpellManager            = new SpellManager(this, model);
+            GrantRecallSpell();
             PetCustomisationManager = new PetCustomisationManager(this, model);
             KeybindingManager       = new CharacterKeybindingManager(this, model);
             DatacubeManager         = new DatacubeManager(this, model);
@@ -1101,6 +1102,34 @@ namespace NexusForever.Game.Entity
             {
                 BindPointId = bindPointId
             });
+
+            GrantRecallSpell();
+        }
+
+        /// <summary>
+        /// GameFormula entry holding the spell the GoToBind game command (the Recall button) casts, 8568.
+        /// </summary>
+        private const uint RecallSpellFormulaId = 777u;
+
+        /// <summary>
+        /// Add the recall spell to the ability book of <see cref="IPlayer"/> once they have a bind point.
+        /// </summary>
+        /// <remarks>
+        /// The GoToBind command looks up the base spell of its GameFormula 777 spell in the ability book and casts it from its bag
+        /// index with ClientCastSpell or ClientCastSpellContinuous (0x1405C9900, 0x1403BD6D0), so the Recall button does nothing
+        /// while the spell is missing. No table grants it, it is given with the bind point (inferred).
+        /// </remarks>
+        private void GrantRecallSpell()
+        {
+            if (BindPoint == 0)
+                return;
+
+            uint spell4Id = GameTableManager.Instance.GameFormula.GetEntry(RecallSpellFormulaId)?.Dataint0 ?? 0u;
+            Spell4Entry spell4Entry = GameTableManager.Instance.Spell4.GetEntry(spell4Id);
+            if (spell4Entry == null || SpellManager.GetSpell(spell4Entry.Spell4BaseIdBaseSpell) != null)
+                return;
+
+            SpellManager.AddSpell(spell4Entry.Spell4BaseIdBaseSpell, (byte)spell4Entry.TierIndex);
         }
 
         /// <summary>
