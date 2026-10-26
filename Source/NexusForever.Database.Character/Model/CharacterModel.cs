@@ -39,6 +39,14 @@ namespace NexusForever.Database.Character.Model
         public ulong? GuildAffiliation { get; set; }
         public uint Flags { get; set; }
         public bool IsOnline { get; set; }
+        public ushort BindPoint { get; set; }
+        public ushort BindPointWorldId { get; set; }
+        public float BindPointLocationX { get; set; }
+        public float BindPointLocationY { get; set; }
+        public float BindPointLocationZ { get; set; }
+        public float BindPointRotationX { get; set; }
+        public float BindPointRotationY { get; set; }
+        public float BindPointRotationZ { get; set; }
 
         public ResidenceModel Residence { get; set; }
         public ICollection<CharacterAchievementModel> Achievement { get; set; } = new HashSet<CharacterAchievementModel>();

@@ -138,6 +138,21 @@ namespace NexusForever.Game.Abstract.Entity
         bool CanTeleport();
 
         /// <summary>
+        /// Current bind point id, 0 if <see cref="IPlayer"/> has never bound to a transmat terminal.
+        /// </summary>
+        ushort BindPoint { get; }
+
+        /// <summary>
+        /// Bind <see cref="IPlayer"/> to the supplied bind point at their current location.
+        /// </summary>
+        void SetBindPoint(ushort bindPointId);
+
+        /// <summary>
+        /// Teleport <see cref="IPlayer"/> to the location they bound at, returns false if they have no bind point.
+        /// </summary>
+        bool TeleportToBindPoint();
+
+        /// <summary>
         /// Teleport <see cref="IPlayer"/> to supplied location.
         /// </summary>
         void TeleportTo(ushort worldId, float x, float y, float z, IMapLock mapLock = null, TeleportReason reason = TeleportReason.Relocate);

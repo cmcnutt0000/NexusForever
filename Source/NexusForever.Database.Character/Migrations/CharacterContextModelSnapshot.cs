@@ -1022,6 +1022,54 @@ namespace NexusForever.Database.Character.Migrations
                         .HasDefaultValue((byte)0)
                         .HasColumnName("activeSpec");
 
+                    b.Property<ushort>("BindPoint")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint(5) unsigned")
+                        .HasDefaultValue((ushort)0)
+                        .HasColumnName("bindPoint");
+
+                    b.Property<float>("BindPointLocationX")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("float")
+                        .HasDefaultValue(0f)
+                        .HasColumnName("bindPointLocationX");
+
+                    b.Property<float>("BindPointLocationY")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("float")
+                        .HasDefaultValue(0f)
+                        .HasColumnName("bindPointLocationY");
+
+                    b.Property<float>("BindPointLocationZ")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("float")
+                        .HasDefaultValue(0f)
+                        .HasColumnName("bindPointLocationZ");
+
+                    b.Property<float>("BindPointRotationX")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("float")
+                        .HasDefaultValue(0f)
+                        .HasColumnName("bindPointRotationX");
+
+                    b.Property<float>("BindPointRotationY")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("float")
+                        .HasDefaultValue(0f)
+                        .HasColumnName("bindPointRotationY");
+
+                    b.Property<float>("BindPointRotationZ")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("float")
+                        .HasDefaultValue(0f)
+                        .HasColumnName("bindPointRotationZ");
+
+                    b.Property<ushort>("BindPointWorldId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint(5) unsigned")
+                        .HasDefaultValue((ushort)0)
+                        .HasColumnName("bindPointWorldId");
+
                     b.Property<byte>("Class")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(3) unsigned")

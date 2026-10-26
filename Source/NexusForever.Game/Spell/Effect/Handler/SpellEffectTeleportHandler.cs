@@ -43,6 +43,15 @@ namespace NexusForever.Game.Spell.Effect.Handler
             if (target is not IPlayer player)
                 return SpellEffectExecutionResult.Ok;
 
+            // recalls have no location, they return the player to their bind point (8568 Recall Shard, the client's GoToBind
+            // spell from GameFormula 777, also 49881 /stuck, 40741 and 71361), inferred from the data
+            // TODO: the two Soldier "Bind Location" spells also have no location but set DataBits01 to 1, unknown
+            if (data.WorldLocationId == 0u && data.Entry.DataBits01 == 0u)
+            {
+                player.TeleportToBindPoint();
+                return SpellEffectExecutionResult.Ok;
+            }
+
             WorldLocation2Entry locationEntry = gameTableManager.WorldLocation2.GetEntry(data.WorldLocationId);
             if (locationEntry == null)
                 return SpellEffectExecutionResult.Ok;

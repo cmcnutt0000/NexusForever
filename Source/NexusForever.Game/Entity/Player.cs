@@ -77,6 +77,7 @@ namespace NexusForever.Game.Entity
             Path        = 0x0002,
             Costume     = 0x0004,
             InputKeySet = 0x0008,
+            BindPoint   = 0x0010,
             Flags       = 0x0020,
             Innate      = 0x0080,
             Sex         = 0x0100,
@@ -163,6 +164,16 @@ namespace NexusForever.Game.Entity
             }
         }
         private InputSets inputKeySet;
+
+        /// <summary>
+        /// Current <see cref="BindPointEntry"/> id, 0 if <see cref="IPlayer"/> has never bound to a transmat terminal.
+        /// </summary>
+        public ushort BindPoint { get; private set; }
+
+        // where the player stood when they bound, recall spells return them here
+        private ushort bindPointWorldId;
+        private Vector3 bindPointPosition;
+        private Vector3 bindPointRotation;
 
         public override uint Level
         {
@@ -337,6 +348,10 @@ namespace NexusForever.Game.Entity
             path              = (Path)model.ActivePath;
             PathActivatedTime = model.PathActivatedTimestamp;
             InputKeySet       = (InputSets)model.InputKeySet;
+            BindPoint         = model.BindPoint;
+            bindPointWorldId  = model.BindPointWorldId;
+            bindPointPosition = new Vector3(model.BindPointLocationX, model.BindPointLocationY, model.BindPointLocationZ);
+            bindPointRotation = new Vector3(model.BindPointRotationX, model.BindPointRotationY, model.BindPointRotationZ);
             Faction1          = (Faction)model.FactionId;
             Faction2          = (Faction)model.FactionId;
             flags             = (CharacterFlag)model.Flags;
@@ -568,6 +583,33 @@ namespace NexusForever.Game.Entity
                     entity.Property(p => p.InputKeySet).IsModified = true;
                 }
 
+                if ((saveMask & PlayerSaveMask.BindPoint) != 0)
+                {
+                    model.BindPoint = BindPoint;
+                    entity.Property(p => p.BindPoint).IsModified = true;
+
+                    model.BindPointWorldId = bindPointWorldId;
+                    entity.Property(p => p.BindPointWorldId).IsModified = true;
+
+                    model.BindPointLocationX = bindPointPosition.X;
+                    entity.Property(p => p.BindPointLocationX).IsModified = true;
+
+                    model.BindPointLocationY = bindPointPosition.Y;
+                    entity.Property(p => p.BindPointLocationY).IsModified = true;
+
+                    model.BindPointLocationZ = bindPointPosition.Z;
+                    entity.Property(p => p.BindPointLocationZ).IsModified = true;
+
+                    model.BindPointRotationX = bindPointRotation.X;
+                    entity.Property(p => p.BindPointRotationX).IsModified = true;
+
+                    model.BindPointRotationY = bindPointRotation.Y;
+                    entity.Property(p => p.BindPointRotationY).IsModified = true;
+
+                    model.BindPointRotationZ = bindPointRotation.Z;
+                    entity.Property(p => p.BindPointRotationZ).IsModified = true;
+                }
+
                 if ((saveMask & PlayerSaveMask.Flags) != 0)
                 {
                     model.Flags = (uint)Flags;
@@ -774,6 +816,7 @@ namespace NexusForever.Game.Entity
                     },
                     ActiveCostumeIndex    = CostumeManager.CostumeIndex ?? -1,
                     InputKeySet           = (uint)InputKeySet,
+                    BindPointId           = BindPoint,
                     CharacterEntitlements = EntitlementManager
                         .Select(e => new ServerPlayerCreate.CharacterEntitlement
                         {
@@ -1039,6 +1082,42 @@ namespace NexusForever.Game.Entity
         /// Returns if <see cref="IPlayer"/> can teleport.
         /// </summary>
         public bool CanTeleport() => pendingTeleport == null && !pendingLocalTeleport;
+
+        /// <summary>
+        /// Bind <see cref="IPlayer"/> to the supplied <see cref="BindPointEntry"/> at their current location.
+        /// </summary>
+        public void SetBindPoint(ushort bindPointId)
+        {
+            if (GameTableManager.Instance.BindPoint.GetEntry(bindPointId) == null)
+                throw new ArgumentException($"{bindPointId} is not a valid bind point id!");
+
+            BindPoint         = bindPointId;
+            bindPointWorldId  = (ushort)Map.Entry.Id;
+            bindPointPosition = Position;
+            bindPointRotation = Rotation;
+            saveMask |= PlayerSaveMask.BindPoint;
+
+            Session.EnqueueMessageEncrypted(new ServerBindPointSet
+            {
+                BindPointId = bindPointId
+            });
+        }
+
+        /// <summary>
+        /// Teleport <see cref="IPlayer"/> to the location they bound at, returns false if they have no bind point.
+        /// </summary>
+        public bool TeleportToBindPoint()
+        {
+            if (BindPoint == 0 || GameTableManager.Instance.BindPoint.GetEntry(BindPoint) == null)
+                return false;
+
+            if (!CanTeleport())
+                return false;
+
+            Rotation = bindPointRotation;
+            TeleportTo(bindPointWorldId, bindPointPosition.X, bindPointPosition.Y, bindPointPosition.Z);
+            return true;
+        }
 
         private PendingTeleport pendingTeleport;
         private bool pendingLocalTeleport;

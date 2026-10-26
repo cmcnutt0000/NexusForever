@@ -2,6 +2,7 @@
 using NexusForever.Game.Abstract.Entity;
 using NexusForever.Game.Abstract.Prerequisite;
 using NexusForever.Game.Static.Prerequisite;
+using NexusForever.GameTable;
 
 namespace NexusForever.Game.Prerequisite.Check
 {
@@ -9,8 +10,9 @@ namespace NexusForever.Game.Prerequisite.Check
     /// Checks if the player has a bind point.
     /// </summary>
     /// <remarks>
-    /// See 0x14049CA70 in the client (same field as Lua Unit:IsCurrentBindPoint).
-    /// TODO: NexusForever doesn't store bind points.
+    /// See 0x14049CA70 in the client: false for anything but a player, otherwise whether the current bind point (the field
+    /// GameLib.HasBindPoint and Unit:IsCurrentBindPoint read) is a BindPoint entry. The client also accepts a player's ghost
+    /// (unit type 23), which isn't an <see cref="IPlayer"/> here.
     /// </remarks>
     [PrerequisiteCheck(PrerequisiteType.HasBindPoint)]
     public class PrerequisiteCheckHasBindPoint : IPrerequisiteCheck
@@ -18,18 +20,25 @@ namespace NexusForever.Game.Prerequisite.Check
         #region Dependency Injection
 
         private readonly ILogger<PrerequisiteCheckHasBindPoint> log;
+        private readonly IGameTableManager gameTableManager;
 
         public PrerequisiteCheckHasBindPoint(
-            ILogger<PrerequisiteCheckHasBindPoint> log)
+            ILogger<PrerequisiteCheckHasBindPoint> log,
+            IGameTableManager gameTableManager)
         {
-            this.log = log;
+            this.log              = log;
+            this.gameTableManager = gameTableManager;
         }
 
         #endregion
 
         public bool Meets(IUnitEntity subject, PrerequisiteComparison comparison, uint value, uint objectId, IPrerequisiteParameters parameters)
         {
-            if (!PrerequisiteComparer.TryEvaluate(comparison, false, out bool result))
+            if (subject is not IPlayer player)
+                return false;
+
+            bool hasBindPoint = gameTableManager.BindPoint.GetEntry(player.BindPoint) != null;
+            if (!PrerequisiteComparer.TryEvaluate(comparison, hasBindPoint, out bool result))
                 log.LogWarning($"Unhandled PrerequisiteComparison {comparison} for {PrerequisiteType.HasBindPoint}!");
 
             return result;

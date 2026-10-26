@@ -98,6 +98,46 @@ namespace NexusForever.Database.Character
                     .HasColumnType("tinyint(3) unsigned")
                     .HasDefaultValue(0);
 
+                entity.Property(e => e.BindPoint)
+                    .HasColumnName("bindPoint")
+                    .HasColumnType("smallint(5) unsigned")
+                    .HasDefaultValue(0);
+
+                entity.Property(e => e.BindPointWorldId)
+                    .HasColumnName("bindPointWorldId")
+                    .HasColumnType("smallint(5) unsigned")
+                    .HasDefaultValue(0);
+
+                entity.Property(e => e.BindPointLocationX)
+                    .HasColumnName("bindPointLocationX")
+                    .HasColumnType("float")
+                    .HasDefaultValue(0);
+
+                entity.Property(e => e.BindPointLocationY)
+                    .HasColumnName("bindPointLocationY")
+                    .HasColumnType("float")
+                    .HasDefaultValue(0);
+
+                entity.Property(e => e.BindPointLocationZ)
+                    .HasColumnName("bindPointLocationZ")
+                    .HasColumnType("float")
+                    .HasDefaultValue(0);
+
+                entity.Property(e => e.BindPointRotationX)
+                    .HasColumnName("bindPointRotationX")
+                    .HasColumnType("float")
+                    .HasDefaultValue(0);
+
+                entity.Property(e => e.BindPointRotationY)
+                    .HasColumnName("bindPointRotationY")
+                    .HasColumnType("float")
+                    .HasDefaultValue(0);
+
+                entity.Property(e => e.BindPointRotationZ)
+                    .HasColumnName("bindPointRotationZ")
+                    .HasColumnType("float")
+                    .HasDefaultValue(0);
+
                 entity.Property(e => e.Class)
                     .HasColumnName("class")
                     .HasColumnType("tinyint(3) unsigned")
